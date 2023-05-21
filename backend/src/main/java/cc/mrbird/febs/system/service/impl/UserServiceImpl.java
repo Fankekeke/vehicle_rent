@@ -2,12 +2,9 @@ package cc.mrbird.febs.system.service.impl;
 
 import cc.mrbird.febs.common.domain.FebsConstant;
 import cc.mrbird.febs.common.domain.QueryRequest;
-import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.common.service.CacheService;
 import cc.mrbird.febs.common.utils.SortUtil;
 import cc.mrbird.febs.common.utils.MD5Util;
-import cc.mrbird.febs.cos.entity.UserInfo;
-import cc.mrbird.febs.cos.service.IUserInfoService;
 import cc.mrbird.febs.system.dao.UserMapper;
 import cc.mrbird.febs.system.dao.UserRoleMapper;
 import cc.mrbird.febs.system.domain.User;
@@ -17,11 +14,9 @@ import cc.mrbird.febs.system.service.UserConfigService;
 import cc.mrbird.febs.system.service.UserRoleService;
 import cc.mrbird.febs.system.service.UserService;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -49,8 +44,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserRoleService userRoleService;
     @Autowired
     private UserManager userManager;
-    @Autowired
-    private IUserInfoService userInfoService;
+//    @Autowired
+//    private IUserInfoService userInfoService;
 
 
     @Override
@@ -214,12 +209,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         this.userRoleMapper.insert(ur);
 
         // 添加用户信息
-        UserInfo userInfo = new UserInfo();
-        userInfo.setCode("UR-" + System.currentTimeMillis());
-        userInfo.setName(name);
-        userInfo.setUserId(Math.toIntExact(user.getUserId()));
-        userInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
-        userInfoService.save(userInfo);
+//        UserInfo userInfo = new UserInfo();
+//        userInfo.setCode("UR-" + System.currentTimeMillis());
+//        userInfo.setName(name);
+//        userInfo.setUserId(Math.toIntExact(user.getUserId()));
+//        userInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
+//        userInfoService.save(userInfo);
 
         // 创建用户默认的个性化配置
         userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));

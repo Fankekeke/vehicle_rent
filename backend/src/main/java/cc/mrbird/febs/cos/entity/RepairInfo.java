@@ -12,14 +12,14 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 租车订单
+ * 车辆维修
  *
  * @author FanK
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class OrderInfo implements Serializable {
+public class RepairInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,64 +30,59 @@ public class OrderInfo implements Serializable {
     private Integer id;
 
     /**
-     * 订单编号
-     */
-    private String code;
-
-    /**
-     * 订单名称
-     */
-    private String orderName;
-
-    /**
-     * 所属用户
-     */
-    private Integer userId;
-
-    /**
      * 车辆编号
      */
     private String vehicleNo;
 
     /**
-     * 每日租金
+     * 所属车厂
      */
-    private BigDecimal dayPrice;
+    private String shopCode;
 
     /**
-     * 开始租车时间
+     * 维修原因
      */
-    private LocalDate startDate;
+    private String reason;
 
     /**
-     * 归还车辆时间
+     * 维修金额
      */
-    private LocalDate endDate;
+    private BigDecimal price;
 
     /**
-     * 取车店铺
+     * 办理人
      */
-    private String takeShop;
+    private String chargePerson;
 
     /**
-     * 归还车辆店铺
+     * 维修开始时间
      */
-    private String returnShop;
+    private String repairStart;
 
     /**
-     * 总价格
+     * 维修结束时间
      */
-    private BigDecimal total;
+    private String repairEnd;
+
+    /**
+     * 维修店名称
+     */
+    private String repairShop;
+
+    /**
+     * 维修店地址
+     */
+    private String shopAddress;
+
+    /**
+     * 备注
+     */
+    private String content;
 
     /**
      * 创建时间
      */
     private String createDate;
-
-    /**
-     * 备注信息
-     */
-    private String remark;
 
 
 }

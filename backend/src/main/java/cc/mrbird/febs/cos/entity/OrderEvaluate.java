@@ -1,6 +1,5 @@
 package cc.mrbird.febs.cos.entity;
 
-import java.time.LocalDateTime;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -10,14 +9,14 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 员工管理
+ * 订单评价
  *
  * @author FanK
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class StaffInfo implements Serializable {
+public class OrderEvaluate implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,29 +27,24 @@ public class StaffInfo implements Serializable {
     private Integer id;
 
     /**
-     * 员工编号
+     * 所属订单
      */
-    private String code;
+    private Integer orderId;
 
     /**
-     * 员工姓名
+     * 评分
      */
-    private String name;
+    private Integer score;
 
     /**
-     * 性别（1.男 2.女）
+     * 评价用户
      */
-    private Integer sex;
+    private Integer userId;
 
     /**
-     * 状态（1.在职 2.离职）
+     * 评价备注
      */
-    private Integer status;
-
-    /**
-     * 所属部门
-     */
-    private String deptId;
+    private String remark;
 
     /**
      * 照片
@@ -58,16 +52,9 @@ public class StaffInfo implements Serializable {
     private String images;
 
     /**
-     * 创建时间
+     * 评价时间
      */
     private String createDate;
-
-    /**
-     * 所属账户
-     */
-    private Long userId;
-
-    private Integer pharmacyId;
 
 
 }

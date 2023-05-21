@@ -1,7 +1,6 @@
 package cc.mrbird.febs.cos.entity;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -11,14 +10,16 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 价格规则
+ * 车辆轨迹
  *
  * @author FanK
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class PriceRules implements Serializable {
+public class VehicleTrack implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * 主键ID
@@ -26,27 +27,24 @@ public class PriceRules implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * 车辆编号
+     */
+    private String vehicleNo;
 
     /**
-     * 单价
+     * 经度
      */
-    private BigDecimal unitPrice;
+    private BigDecimal longitude;
 
     /**
-     * 规则编号
+     * 纬度
      */
-    private String code;
+    private BigDecimal latitude;
 
     /**
-     * 规则备注
+     * 所属订单
      */
-    private String remark;
-
-    /**
-     * 创建时间
-     */
-    private String createDate;
-
+    private Integer orderId;
 
 }

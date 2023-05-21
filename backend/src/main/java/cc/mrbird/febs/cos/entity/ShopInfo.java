@@ -10,14 +10,14 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 消息通知
+ * 车店管理
  *
  * @author FanK
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class NotifyInfo implements Serializable {
+public class ShopInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,19 +28,29 @@ public class NotifyInfo implements Serializable {
     private Integer id;
 
     /**
-     * 用户编号
+     * 车店编号
      */
-    private String userCode;
+    private String shopCode;
 
     /**
-     * 消息内容
+     * 车店名称
      */
-    private String content;
+    private String name;
 
     /**
-     * 删除标识
+     * 编号
      */
-    private Integer delFlag;
+    private String code;
+
+    /**
+     * 图片
+     */
+    private String images;
+
+    /**
+     * 所属账户
+     */
+    private Integer userId;
 
     /**
      * 创建时间
@@ -48,16 +58,19 @@ public class NotifyInfo implements Serializable {
     private String createDate;
 
     /**
-     * 用户姓名
+     * 标识 0.休息 1.营业
      */
-    private String name;
+    private String delFlag;
 
-    public NotifyInfo(String userCode, Integer delFlag, String createDate, String name) {
-        this.userCode = userCode;
-        this.delFlag = delFlag;
-        this.createDate = createDate;
-        this.name = name;
-    }
+    /**
+     * 负责人
+     */
+    private String principal;
 
-    public NotifyInfo() {}
+    /**
+     * 联系电话
+     */
+    private String phone;
+
+
 }

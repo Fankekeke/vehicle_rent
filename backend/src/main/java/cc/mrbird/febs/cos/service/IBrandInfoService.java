@@ -1,11 +1,11 @@
 package cc.mrbird.febs.cos.service;
 
-import cc.mrbird.febs.cos.entity.StaffInfo;
+import cc.mrbird.febs.cos.entity.BrandInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * @author FanK
  */
-public interface IStaffInfoService extends IService<StaffInfo> {
+public interface IBrandInfoService extends IService<BrandInfo> {
 
 }

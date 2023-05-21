@@ -5,14 +5,13 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 缴费信息
+ * 缴费记录
  *
  * @author FanK
  */
@@ -30,28 +29,29 @@ public class PaymentRecord implements Serializable {
     private Integer id;
 
     /**
-     * 用户编号
+     * 所属订单
      */
-    private String userCode;
+    private Integer orderId;
 
     /**
-     * 订单编号
+     * 总价格
      */
-    private String orderCode;
+    private BigDecimal totalPrice;
 
     /**
-     * 付款金额
+     * 缴费状态（0.未付款 1.已付款）
      */
-    private BigDecimal amount;
+    private String payStatus;
+
+    /**
+     * 下单时间
+     */
+    private String createDate;
 
     /**
      * 付款时间
      */
-    private String createDate;
+    private String payTime;
 
-    @TableField(exist = false)
-    private String userName;
 
-    @TableField(exist = false)
-    private Integer userId;
 }

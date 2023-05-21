@@ -10,14 +10,14 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 订单分配
+ * 品牌管理
  *
  * @author FanK
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class OrderDistribute implements Serializable {
+public class BrandInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,25 +28,29 @@ public class OrderDistribute implements Serializable {
     private Integer id;
 
     /**
-     * 订单编号
+     * 品牌编号
      */
-    private String orderCode;
+    private String brandCode;
 
     /**
-     * 员工编号
+     * 品牌名称
      */
-    private String staffCode;
+    private String name;
 
     /**
-     * 分配时间
+     * 图片
+     */
+    private String images;
+
+    /**
+     * 创建时间
      */
     private String createDate;
 
-    public OrderDistribute(String orderCode, String staffCode, String createDate) {
-        this.orderCode = orderCode;
-        this.staffCode = staffCode;
-        this.createDate = createDate;
-    }
+    /**
+     * 备注
+     */
+    private String remark;
 
-    public OrderDistribute() {}
+
 }
