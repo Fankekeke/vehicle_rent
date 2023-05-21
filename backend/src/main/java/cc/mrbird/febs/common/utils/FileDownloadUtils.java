@@ -1,0 +1,54 @@
+package cc.mrbird.febs.common.utils;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.PathResource;
+import org.springframework.core.io.Resource;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
+
+/**
+ * @author 梁绍杰
+ * @date 2021/6/9 17:00
+ */
+public class FileDownloadUtils {
+
+    public static void downloadTemplate(HttpServletResponse response, String fileName) throws Exception {
+        // InputStream in = new FileInputStream("./uap-modules/uap-modules-scc/src/main/resources/template/" + fileName);
+        Resource res = new ClassPathResource("template/" + fileName);
+        InputStream in = res.getInputStream();
+        try (// 以流的形式下载文件。
+             BufferedInputStream fis = new BufferedInputStream(in);
+             BufferedOutputStream toClient = new BufferedOutputStream(response.getOutputStream())) {
+            response.reset();
+            response.setContentType("multipart/form-data");
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+            int len;
+            while ((len = fis.read()) != -1) {
+                toClient.write(len);
+                toClient.flush();
+            }
+        } catch (IOException ex) {
+            throw new Exception("下载文件失败！");
+        }
+    }
+    public static void downloadPdf(HttpServletResponse response, String fileName) throws Exception {
+        InputStream in = new FileInputStream(fileName);
+        try (// 以流的形式下载文件。
+             BufferedInputStream fis = new BufferedInputStream(in);
+             BufferedOutputStream toClient = new BufferedOutputStream(response.getOutputStream())) {
+            response.reset();
+            response.setContentType("application/json");
+//            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "iso8859-1"));
+            int len;
+            while ((len = fis.read()) != -1) {
+                toClient.write(len);
+                toClient.flush();
+            }
+        } catch (IOException ex) {
+            throw new Exception("下载文件失败！");
+        }
+    }
+}

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.OrderInfoMapper">
+
+    <!-- 分页获取订单信息 -->
+    <select id="selectOrderPage" resultType="java.util.LinkedHashMap">
+        select
+        oi.id,
+        oi.code,
+        oi.user_id,
+        oi.vehicle_options,
+        oi.staff_options,
+        oi.start_address,
+        oi.end_address,
+        oi.start_longitude,
+        oi.start_latitude,
+        oi.end_longitude,
+        oi.end_latitude,
+        oi.distance_length,
+        oi.images,
+        oi.remark,
+        oi.status,
+        oi.create_date,
+        oi.amount,
+        ui.name as userName,
+        ui.phone,
+        ui.images as userImages,
+        oi.driver_code,
+        oi.has_elevator,
+        ei.id as evaluate_id
+        from
+        order_info oi
+        left join user_info ui on
+        (ui.id = oi.user_id)
+        left join evaluate_info ei on (ei.order_code = oi.code)
+        where
+        1 = 1
+        <if test="orderInfo.userName != null and orderInfo.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{orderInfo.userName},'%')
+        </if>
+        <if test="orderInfo.code != null and orderInfo.code != ''">
+            AND oi.code LIKE CONCAT('%',#{orderInfo.code},'%')
+        </if>
+        <if test="orderInfo.status != null">
+            AND oi.status = #{orderInfo.status}
+        </if>
+        <if test="orderInfo.userId != null">
+            AND oi.user_id = #{orderInfo.userId}
+        </if>
+        order by
+        oi.create_date desc
+    </select>
+
+    <!-- 根据状态获取订单信息 -->
+    <select id="selectOrderByStatus" resultType="java.util.LinkedHashMap">
+        select
+        oi.id,
+        oi.code,
+        oi.user_id,
+        oi.vehicle_options,
+        oi.staff_options,
+        oi.start_address,
+        oi.end_address,
+        oi.start_longitude,
+        oi.start_latitude,
+        oi.end_longitude,
+        oi.end_latitude,
+        oi.distance_length,
+        oi.images,
+        oi.status,
+        oi.remark,
+        oi.create_date,
+        oi.amount,
+        oi.driver_code,
+        ui.name as userName,
+        ui.phone,
+        ui.images as userImages
+        from
+        order_info oi
+        left join user_info ui on
+        (ui.id = oi.user_id)
+        where
+        1 = 1
+        <if test="orderInfo.status != null">
+            AND oi.status = #{orderInfo.status}
+        </if>
+        order by
+        oi.create_date desc
+    </select>
+
+    <!-- 近十天内订单数量统计 -->
+    <select id="selectOrderNumDays" resultType="java.util.LinkedHashMap">
+        SELECT
+        DATE_FORMAT( spo.days, '%m-%d' ) AS days,
+        IFNULL(COUNT(oi.id), 0) AS count
+        FROM
+        (
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 0 DAY ) days UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 1 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 2 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 3 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 4 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 5 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 6 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 7 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 8 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 9 DAY )) spo
+        LEFT JOIN order_info oi ON (
+        DATE_FORMAT( oi.create_date, '%Y-%m-%d' ) = DATE_FORMAT( spo.days, '%Y-%m-%d' ))
+        WHERE 1 = 1
+        GROUP BY
+        days
+        ORDER BY
+        days ASC
+    </select>
+
+    <!-- 近十天内订单收益统计 -->
+    <select id="selectOrderAmountDays" resultType="java.util.LinkedHashMap">
+        SELECT
+        DATE_FORMAT( spo.days, '%m-%d' ) AS days,
+        IFNULL(SUM(oi.amount), 0) AS price
+        FROM
+        (
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 0 DAY ) days UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 1 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 2 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 3 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 4 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 5 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 6 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 7 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 8 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 9 DAY )) spo
+        LEFT JOIN order_info oi ON (
+        DATE_FORMAT( oi.create_date, '%Y-%m-%d' ) = DATE_FORMAT( spo.days, '%Y-%m-%d' ) AND oi.status != 0)
+        WHERE 1 = 1
+        <if test="pharmacyId != null">
+            AND oi.pharmacy_id = #{pharmacyId}
+        </if>
+        GROUP BY
+        days
+        ORDER BY
+        days ASC
+    </select>
+
+    <!-- 本月订单信息 -->
+    <select id="selectOrderInfoByMonth" resultType="cc.mrbird.febs.cos.entity.OrderInfo">
+        select
+        oi.id,
+        oi.code,
+        oi.user_id,
+        oi.vehicle_options,
+        oi.staff_options,
+        oi.start_address,
+        oi.end_address,
+        oi.start_longitude,
+        oi.start_latitude,
+        oi.end_longitude,
+        oi.end_latitude,
+        oi.distance_length,
+        oi.images,
+        oi.remark,
+        oi.status,
+        oi.create_date,
+        oi.amount
+        from
+        order_info oi
+        where
+        1 = 1
+        and DATE_FORMAT( oi.create_date, '%Y-%m' ) = DATE_FORMAT( CURDATE(), '%Y-%m' )
+    </select>
+
+    <!-- 本年订单信息 -->
+    <select id="selectOrderInfoByYear" resultType="cc.mrbird.febs.cos.entity.OrderInfo">
+        select
+            oi.id,
+            oi.code,
+            oi.user_id,
+            oi.vehicle_options,
+            oi.staff_options,
+            oi.start_address,
+            oi.end_address,
+            oi.start_longitude,
+            oi.start_latitude,
+            oi.end_longitude,
+            oi.end_latitude,
+            oi.distance_length,
+            oi.images,
+            oi.remark,
+            oi.status,
+            oi.create_date,
+            oi.amount
+        from
+            order_info oi
+        where
+            1 = 1
+          and DATE_FORMAT( oi.create_date, '%Y' ) = DATE_FORMAT( CURDATE(), '%Y' )
+    </select>
+</mapper>
