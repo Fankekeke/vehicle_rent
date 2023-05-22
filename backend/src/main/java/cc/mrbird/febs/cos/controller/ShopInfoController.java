@@ -5,6 +5,7 @@ import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.ShopInfo;
 import cc.mrbird.febs.cos.service.IShopInfoService;
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +52,9 @@ public class ShopInfoController {
      *
      * @return 结果
      */
-    @GetMapping("/list")
-    public R list() {
-        return R.ok(shopInfoService.list());
+    @GetMapping("/list/{status}")
+    public R list(@PathVariable("status") String status) {
+        return R.ok(shopInfoService.list(Wrappers.<ShopInfo>lambdaQuery().eq(ShopInfo::getDelFlag, status)));
     }
 
     /**
@@ -65,6 +66,7 @@ public class ShopInfoController {
     @PostMapping
     public R save(ShopInfo shopInfo) {
         shopInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
+        shopInfo.setCode("SP-" + System.currentTimeMillis());
         return R.ok(shopInfoService.save(shopInfo));
     }
 

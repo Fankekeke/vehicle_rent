@@ -64,6 +64,7 @@ public class BrandInfoController {
      */
     @PostMapping
     public R save(BrandInfo brandInfo) {
+        brandInfo.setBrandCode("BR-" + System.currentTimeMillis());
         brandInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         return R.ok(brandInfoService.save(brandInfo));
     }

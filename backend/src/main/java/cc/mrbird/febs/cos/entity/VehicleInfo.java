@@ -74,7 +74,7 @@ public class VehicleInfo implements Serializable {
     private String phone;
 
     /**
-     * 车辆状态（1.使用中 2.维修中 3.已报废）
+     * 车辆状态（0.空闲 1.使用中 2.维修中 3.已报废）
      */
     private String status;
 

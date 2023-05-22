@@ -84,5 +84,9 @@ public class RepairInfo implements Serializable {
      */
     private String createDate;
 
+    /**
+     * 维修状态 0.未完成 1.已完成
+     */
+    private String repairStatus;
 
 }

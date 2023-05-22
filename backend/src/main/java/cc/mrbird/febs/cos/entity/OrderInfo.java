@@ -90,6 +90,11 @@ public class OrderInfo implements Serializable {
      */
     private String remark;
 
+    /**
+     * -1.未支付 0.未完成 1.已完成
+     */
+    private String status;
+
     @TableField(exist = false)
     private String vehicleName;
 

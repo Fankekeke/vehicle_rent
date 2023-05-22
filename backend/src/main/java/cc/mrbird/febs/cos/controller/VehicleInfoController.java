@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.controller;
 
 
+import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.VehicleInfo;
 import cc.mrbird.febs.cos.service.IVehicleInfoService;
@@ -63,9 +64,9 @@ public class VehicleInfoController {
      * @return 结果
      */
     @PostMapping
-    public R save(VehicleInfo vehicleInfo) {
+    public R save(VehicleInfo vehicleInfo) throws FebsException {
         vehicleInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
-        return R.ok(vehicleInfoService.save(vehicleInfo));
+        return R.ok(vehicleInfoService.vehicleAdd(vehicleInfo));
     }
 
     /**
