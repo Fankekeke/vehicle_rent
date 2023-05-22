@@ -32,7 +32,7 @@ public class VehicleInfoController {
      */
     @GetMapping("/page")
     public R page(Page<VehicleInfo> page, VehicleInfo vehicleInfo) {
-        return R.ok();
+        return R.ok(vehicleInfoService.selectVehiclePage(page, vehicleInfo));
     }
 
     /**

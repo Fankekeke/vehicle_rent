@@ -32,7 +32,7 @@ public class BrandInfoController {
      */
     @GetMapping("/page")
     public R page(Page<BrandInfo> page, BrandInfo brandInfo) {
-        return R.ok();
+        return R.ok(brandInfoService.selectBrandPage(page, brandInfo));
     }
 
     /**

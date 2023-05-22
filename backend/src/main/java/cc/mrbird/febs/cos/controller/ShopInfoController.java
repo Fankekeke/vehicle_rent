@@ -32,7 +32,7 @@ public class ShopInfoController {
      */
     @GetMapping("/page")
     public R page(Page<ShopInfo> page, ShopInfo shopInfo) {
-        return R.ok();
+        return R.ok(shopInfoService.selectShopPage(page, shopInfo));
     }
 
     /**

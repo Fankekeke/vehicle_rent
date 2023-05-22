@@ -2,4 +2,50 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.OrderInfoMapper">
 
+    <!-- 分页获取订单信息 -->
+    <select id="selectOrderPage" resultType="java.util.LinkedHashMap">
+        select
+        oi.id,
+        oi.code,
+        oi.order_name,
+        oi.user_id,
+        oi.vehicle_no,
+        oi.day_price,
+        oi.start_date,
+        oi.end_date,
+        oi.take_shop,
+        oi.return_shop,
+        oi.total,
+        oi.create_date,
+        oi.remark,
+        ui.name as userName,
+        vi.vehicle_number,
+        vi.name as vehicleName,
+        vi.images
+        from
+        order_info oi
+        left join user_info ui on
+        (ui.id = oi.user_id)
+        left join vehicle_info vi on
+        (vi.vehicle_no = oi.vehicle_no)
+        where
+        1 = 1
+        <if test="orderInfo.code != null and orderInfo.code != ''">
+            AND oi.code LIKE CONCAT('%',#{orderInfo.code},'%')
+        </if>
+        <if test="orderInfo.orderName != null and orderInfo.orderName != ''">
+            AND oi.order_name LIKE CONCAT('%',#{orderInfo.orderName},'%')
+        </if>
+        <if test="orderInfo.vehicleNo != null and orderInfo.vehicleNo != ''">
+            AND oi.vehicle_no LIKE CONCAT('%',#{orderInfo.vehicleNo},'%')
+        </if>
+        <if test="orderInfo.vehicleName != null and orderInfo.vehicleName != ''">
+            AND vi.name LIKE CONCAT('%',#{orderInfo.vehicleName},'%')
+        </if>
+        <if test="orderInfo.vehicleNumber != null and orderInfo.vehicleNumber != ''">
+            AND vi.vehicle_number LIKE CONCAT('%',#{orderInfo.vehicleNumber},'%')
+        </if>
+        order by
+        oi.create_date desc
+    </select>
 </mapper>

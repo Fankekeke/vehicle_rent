@@ -2,4 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.RepairInfoMapper">
 
+    <!-- 分页获取维修信息信息 -->
+    <select id="selectRepairPage" resultType="java.util.LinkedHashMap">
+        select
+        ri.id,
+        ri.vehicle_no,
+        ri.shop_code,
+        ri.reason,
+        ri.price,
+        ri.charge_person,
+        ri.repair_start,
+        ri.repair_end,
+        ri.repair_shop,
+        ri.shop_address,
+        ri.content,
+        ri.create_date,
+        vi.vehicle_number,
+        vi.name,
+        vi.principal,
+        vi.phone,
+        vi.images
+        from
+        repair_info ri
+        left join vehicle_info vi on
+        (vi.vehicle_no = ri.vehicle_no)
+        where
+        1 = 1
+        <if test="repairInfo.vehicleNumber != null and repairInfo.vehicleNumber != ''">
+            AND vi.vehicle_number LIKE CONCAT('%',#{repairInfo.vehicleNumber},'%')
+        </if>
+        <if test="repairInfo.vehicleName != null and repairInfo.vehicleName != ''">
+            AND vi.name LIKE CONCAT('%',#{repairInfo.vehicleName},'%')
+        </if>
+        <if test="repairInfo.principal != null and repairInfo.principal != ''">
+            AND vi.principal LIKE CONCAT('%',#{repairInfo.principal},'%')
+        </if>
+        order by
+        ri.create_date desc
+    </select>
 </mapper>

@@ -32,7 +32,7 @@ public class RepairInfoController {
      */
     @GetMapping("/page")
     public R page(Page<RepairInfo> page, RepairInfo repairInfo) {
-        return R.ok();
+        return R.ok(repairInfoService.selectRepairPage(page, repairInfo));
     }
 
     /**

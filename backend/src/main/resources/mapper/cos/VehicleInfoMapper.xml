@@ -2,4 +2,44 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.VehicleInfoMapper">
 
+    <!-- 分页获取车辆信息 -->
+    <select id="selectVehiclePage" resultType="java.util.LinkedHashMap">
+        select
+        id,
+        vehicle_no,
+        vehicle_number,
+        vehicle_color,
+        name,
+        engine_no,
+        carry_passengers,
+        principal,
+        brand,
+        phone,
+        status,
+        factory_date,
+        use_type,
+        emission_standard,
+        fuel_type,
+        images,
+        content,
+        create_date
+        from
+        vehicle_info
+        where
+        1 = 1
+        <if test="vehicleInfo.vehicleNumber != null and vehicleInfo.vehicleNumber != ''">
+            AND vehicle_number LIKE CONCAT('%',#{vehicleInfo.vehicleNumber},'%')
+        </if>
+        <if test="vehicleInfo.name != null and vehicleInfo.name != ''">
+            AND name LIKE CONCAT('%',#{vehicleInfo.name},'%')
+        </if>
+        <if test="vehicleInfo.engineNo != null and vehicleInfo.engineNo != ''">
+            AND engine_no LIKE CONCAT('%',#{vehicleInfo.engineNo},'%')
+        </if>
+        <if test="vehicleInfo.brand != null and vehicleInfo.brand != ''">
+            AND brand = #{vehicleInfo.brand}
+        </if>
+        order by
+        create_date desc
+    </select>
 </mapper>
