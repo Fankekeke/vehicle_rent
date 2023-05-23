@@ -88,7 +88,10 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         }
 
         // 维修时间校验【开始结束时间不能小于当前日期】
-        boolean repairDateCheck = (DateUtil.compare(new DateTime(), DateUtil.parseDate("2023-05-24")) == -1);
+        boolean repairDateCheck = (DateUtil.compare(new DateTime(), DateUtil.parseDate(repairInfo.getRepairStart())) == -1 && DateUtil.compare(new DateTime(), DateUtil.parseDate(repairInfo.getRepairEnd())) == -1);
+        if (!repairDateCheck) {
+            throw new FebsException("开始结束时间不能小于当前日期");
+        }
 
         repairInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         // 维修状态-判断维修计划是否处于当前时间内
