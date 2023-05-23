@@ -58,12 +58,12 @@ public class OrderInfo implements Serializable {
     /**
      * 开始租车时间
      */
-    private LocalDate startDate;
+    private String startDate;
 
     /**
      * 归还车辆时间
      */
-    private LocalDate endDate;
+    private String endDate;
 
     /**
      * 取车店铺

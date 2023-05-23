@@ -3,6 +3,7 @@ package cc.mrbird.febs.cos.controller;
 
 import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.common.utils.R;
+import cc.mrbird.febs.cos.entity.RepairInfo;
 import cc.mrbird.febs.cos.entity.VehicleInfo;
 import cc.mrbird.febs.cos.service.IVehicleInfoService;
 import cn.hutool.core.date.DateUtil;
@@ -27,13 +28,24 @@ public class VehicleInfoController {
     /**
      * 分页获取车辆信息
      *
-     * @param page      分页对象
+     * @param page        分页对象
      * @param vehicleInfo 车辆信息
      * @return 结果
      */
     @GetMapping("/page")
     public R page(Page<VehicleInfo> page, VehicleInfo vehicleInfo) {
         return R.ok(vehicleInfoService.selectVehiclePage(page, vehicleInfo));
+    }
+
+    /**
+     * 车辆添加维修
+     *
+     * @param repairInfo 维修信息
+     * @return 结果
+     */
+    @PostMapping("/repair/add")
+    public R vehicleRepairAdd(RepairInfo repairInfo) {
+        return R.ok();
     }
 
     /**
@@ -66,6 +78,7 @@ public class VehicleInfoController {
     @PostMapping
     public R save(VehicleInfo vehicleInfo) throws FebsException {
         vehicleInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
+        vehicleInfo.setStatus("0");
         return R.ok(vehicleInfoService.vehicleAdd(vehicleInfo));
     }
 

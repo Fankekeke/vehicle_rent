@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.service;
 
 import cc.mrbird.febs.common.exception.FebsException;
+import cc.mrbird.febs.cos.entity.RepairInfo;
 import cc.mrbird.febs.cos.entity.VehicleInfo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -30,6 +31,14 @@ public interface IVehicleInfoService extends IService<VehicleInfo> {
      * @return 结果
      */
     boolean vehicleAdd(VehicleInfo vehicleInfo) throws FebsException;
+
+    /**
+     * 车辆添加维修
+     *
+     * @param repairInfo 维修信息
+     * @return 结果
+     */
+    boolean vehicleRepairAdd(RepairInfo repairInfo) throws FebsException;
 
     /**
      * 设置车辆在厂状态
