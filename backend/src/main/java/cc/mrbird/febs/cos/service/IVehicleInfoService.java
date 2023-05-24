@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.service;
 
 import cc.mrbird.febs.common.exception.FebsException;
+import cc.mrbird.febs.cos.entity.OrderInfo;
 import cc.mrbird.febs.cos.entity.RepairInfo;
 import cc.mrbird.febs.cos.entity.VehicleInfo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -31,6 +32,22 @@ public interface IVehicleInfoService extends IService<VehicleInfo> {
      * @return 结果
      */
     boolean vehicleAdd(VehicleInfo vehicleInfo) throws FebsException;
+
+    /**
+     * 根据车辆编号获取日历看板
+     *
+     * @param vehicleNo 车辆编号
+     * @return 结果
+     */
+    LinkedHashMap<String, Object> selectVehicleCalendar(String vehicleNo);
+
+    /**
+     * 添加订单信息
+     *
+     * @param orderInfo 车辆订单信息
+     * @return 结果
+     */
+    boolean vehicleOrderAdd(OrderInfo orderInfo) throws FebsException;
 
     /**
      * 车辆添加维修

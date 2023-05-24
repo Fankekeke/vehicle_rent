@@ -30,6 +30,11 @@ public class RepairInfo implements Serializable {
     private Integer id;
 
     /**
+     * 维修单号
+     */
+    private String code;
+
+    /**
      * 车辆编号
      */
     private String vehicleNo;

@@ -11,6 +11,7 @@ import cc.mrbird.febs.cos.service.IOrderInfoService;
 import cc.mrbird.febs.cos.service.IRepairInfoService;
 import cc.mrbird.febs.cos.service.IVehicleInfoService;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
@@ -70,6 +71,107 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
     }
 
     /**
+     * 根据车辆编号获取日历看板
+     *
+     * @param vehicleNo 车辆编号
+     * @return 结果
+     */
+    @Override
+    public LinkedHashMap<String, Object> selectVehicleCalendar(String vehicleNo) {
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
+            {
+                put("order", null);
+                put("repair", null);
+            }
+        };
+        // 正在使用中的订单
+        List<OrderInfo> orderList = orderInfoService.list(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getVehicleNo, vehicleNo)
+                .eq(OrderInfo::getStatus, "0"));
+        if (CollectionUtil.isNotEmpty(orderList)) {
+            LinkedHashMap<String, Object> orderDate = new LinkedHashMap<>();
+            for (OrderInfo order : orderList) {
+                orderDate.put(order.getCode(), DateUtil.rangeToList(DateUtil.parseDate(order.getStartDate()), DateUtil.parseDate(order.getEndDate()), DateField.DAY_OF_YEAR));
+            }
+            result.put("order", orderDate);
+        }
+
+        // 正在维修
+        List<RepairInfo> repairList = repairInfoService.list(Wrappers.<RepairInfo>lambdaQuery().eq(RepairInfo::getVehicleNo, vehicleNo)
+                .eq(RepairInfo::getRepairStatus, 0));
+        if (CollectionUtil.isEmpty(repairList)) {
+            LinkedHashMap<String, Object> repairDate = new LinkedHashMap<>();
+            for (RepairInfo repair : repairList) {
+                repairDate.put(repair.getCode(), DateUtil.rangeToList(DateUtil.parseDate(repair.getRepairStart()), DateUtil.parseDate(repair.getRepairEnd()), DateField.DAY_OF_YEAR));
+            }
+            result.put("repair", repairDate);
+        }
+        return result;
+    }
+
+    /**
+     * 添加订单信息
+     *
+     * @param orderInfo 车辆订单信息
+     * @return 结果
+     */
+    @Override
+    public boolean vehicleOrderAdd(OrderInfo orderInfo) throws FebsException {
+        // 获取车辆信息
+        VehicleInfo vehicleInfo = this.getOne(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, orderInfo.getVehicleNo()));
+        if (vehicleInfo == null) {
+            throw new FebsException("车辆信息不存在！");
+        }
+        if (!"0".equals(vehicleInfo.getStatus())) {
+            throw new FebsException("车辆正在使用中！");
+        }
+
+        // 设置订单开始租车和结束时间
+        orderInfo.setStartDate(DateUtil.formatDateTime(DateUtil.parseDate(orderInfo.getStartDate() + " 00:00:01")));
+        orderInfo.setEndDate(DateUtil.formatDateTime(DateUtil.parseDate(orderInfo.getEndDate() + " 23:59:59")));
+
+        // 判断租车日期是否在维修或其它订单中
+        List<OrderInfo> orderList = orderInfoService.list(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getVehicleNo, orderInfo.getVehicleNo())
+                .eq(OrderInfo::getStatus, "0"));
+        if (CollectionUtil.isNotEmpty(orderList)) {
+            for (OrderInfo order : orderList) {
+                boolean overStartCheck = (DateUtil.compare(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(order.getStartDate())) == -1
+                        && DateUtil.compare(DateUtil.parseDate(orderInfo.getEndDate()), DateUtil.parseDate(order.getEndDate())) == -1);
+                boolean overEndCheck = (DateUtil.compare(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(order.getStartDate())) == -1
+                        && DateUtil.compare(DateUtil.parseDate(orderInfo.getEndDate()), DateUtil.parseDate(order.getEndDate())) == -1);
+                if (!overStartCheck || !overEndCheck) {
+                    throw new FebsException("所选日期在其他用户使用车辆日期内！");
+                }
+            }
+        }
+        // 维修
+        List<RepairInfo> repairList = repairInfoService.list(Wrappers.<RepairInfo>lambdaQuery().eq(RepairInfo::getVehicleNo, orderInfo.getVehicleNo())
+                .eq(RepairInfo::getRepairStatus, 0));
+        if (CollectionUtil.isNotEmpty(repairList)) {
+            for (RepairInfo repair : repairList) {
+                boolean overStartCheck = (DateUtil.compare(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(repair.getRepairStart())) == -1
+                        && DateUtil.compare(DateUtil.parseDate(orderInfo.getEndDate()), DateUtil.parseDate(repair.getRepairEnd())) == -1);
+                boolean overEndCheck = (DateUtil.compare(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(repair.getRepairStart())) == -1
+                        && DateUtil.compare(DateUtil.parseDate(orderInfo.getEndDate()), DateUtil.parseDate(repair.getRepairEnd())) == -1);
+                if (!overStartCheck || !overEndCheck) {
+                    throw new FebsException("所选日期在车辆维修日期内！");
+                }
+            }
+        }
+
+        // 车辆状态-判断当前时间是否处于订单开始结束时间内
+        boolean isIn = DateUtil.isIn(new DateTime(), DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(orderInfo.getEndDate()));
+        if (isIn) {
+            vehicleInfo.setStatus("1");
+            this.updateById(vehicleInfo);
+        }
+        orderInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
+        orderInfo.setStatus("0");
+        orderInfo.setCode("OR-" + System.currentTimeMillis());
+        return orderInfoService.save(orderInfo);
+    }
+
+    /**
      * 车辆添加维修
      *
      * @param repairInfo 维修信息
@@ -93,6 +195,25 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
             throw new FebsException("开始结束时间不能小于当前日期");
         }
 
+        // 设置维修开始结束格式
+        repairInfo.setRepairStart(DateUtil.formatDateTime(DateUtil.parseDate(repairInfo.getRepairStart() + " 00:00:01")));
+        repairInfo.setRepairEnd(DateUtil.formatDateTime(DateUtil.parseDate(repairInfo.getRepairEnd() + " 23:59:59")));
+
+        // 维修车辆是否使用中
+        List<OrderInfo> orderList = orderInfoService.list(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getVehicleNo, repairInfo.getVehicleNo())
+                .eq(OrderInfo::getStatus, "0"));
+        if (CollectionUtil.isNotEmpty(orderList)) {
+            for (OrderInfo order : orderList) {
+                boolean overStartCheck = (DateUtil.compare(DateUtil.parseDate(repairInfo.getRepairStart()), DateUtil.parseDate(order.getStartDate())) == -1
+                        && DateUtil.compare(DateUtil.parseDate(repairInfo.getRepairStart()), DateUtil.parseDate(order.getEndDate())) == -1);
+                boolean overEndCheck = (DateUtil.compare(DateUtil.parseDate(repairInfo.getRepairStart()), DateUtil.parseDate(order.getStartDate())) == -1
+                        && DateUtil.compare(DateUtil.parseDate(repairInfo.getRepairStart()), DateUtil.parseDate(order.getEndDate())) == -1);
+                if (!overStartCheck || !overEndCheck) {
+                    throw new FebsException("维修日期在车辆使用日期内！");
+                }
+            }
+        }
+
         repairInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         // 维修状态-判断维修计划是否处于当前时间内
         boolean isIn = DateUtil.isIn(new DateTime(), DateUtil.parseDate(repairInfo.getRepairStart()), DateUtil.parseDate(repairInfo.getRepairEnd()));
@@ -101,7 +222,7 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
             this.updateById(vehicle);
         }
         repairInfo.setRepairStatus("0");
-        return false;
+        return repairInfoService.save(repairInfo);
     }
 
     /**

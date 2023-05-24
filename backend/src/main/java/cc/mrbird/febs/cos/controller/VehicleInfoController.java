@@ -3,6 +3,7 @@ package cc.mrbird.febs.cos.controller;
 
 import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.common.utils.R;
+import cc.mrbird.febs.cos.entity.OrderInfo;
 import cc.mrbird.febs.cos.entity.RepairInfo;
 import cc.mrbird.febs.cos.entity.VehicleInfo;
 import cc.mrbird.febs.cos.service.IVehicleInfoService;
@@ -38,14 +39,35 @@ public class VehicleInfoController {
     }
 
     /**
+     * 根据车辆编号获取日历看板
+     *
+     * @param vehicleNo 车辆编号
+     * @return 结果
+     */
+    @GetMapping("/vehicle/calendar/{vehicleNo}")
+    public R selectVehicleCalendar(@PathVariable("vehicleNo") String vehicleNo) {
+        return R.ok(vehicleInfoService.selectVehicleCalendar(vehicleNo));
+    }
+
+    /**
+     * 添加订单信息
+     *
+     * @param orderInfo 车辆订单信息
+     * @return 结果
+     */
+    public R vehicleOrderAdd(OrderInfo orderInfo) throws FebsException {
+        return R.ok(vehicleInfoService.vehicleOrderAdd(orderInfo));
+    }
+
+    /**
      * 车辆添加维修
      *
      * @param repairInfo 维修信息
      * @return 结果
      */
     @PostMapping("/repair/add")
-    public R vehicleRepairAdd(RepairInfo repairInfo) {
-        return R.ok();
+    public R vehicleRepairAdd(RepairInfo repairInfo) throws FebsException {
+        return R.ok(vehicleInfoService.vehicleRepairAdd(repairInfo));
     }
 
     /**
