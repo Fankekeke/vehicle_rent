@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,10 +26,10 @@ import java.util.List;
  * @author FanK
  */
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RepairInfoServiceImpl extends ServiceImpl<RepairInfoMapper, RepairInfo> implements IRepairInfoService {
 
-    private final IVehicleInfoService vehicleInfoService;
+    @Resource
+    private IVehicleInfoService vehicleInfoService;
 
     private static final String STR_ONE = "1";
     private static final String STR_TWO = "2";
