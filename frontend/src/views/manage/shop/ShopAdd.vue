@@ -1,59 +1,59 @@
 <template>
-  <a-modal v-model="show" title="新增公告" @cancel="onClose" :width="800">
-    <template slot="footer">
-      <a-button key="back" @click="onClose">
-        取消
-      </a-button>
-      <a-button key="submit" type="primary" :loading="loading" @click="handleSubmit">
-        提交
-      </a-button>
-    </template>
+  <a-drawer
+    title="新增车店"
+    :maskClosable="false"
+    width=800
+    placement="right"
+    :closable="false"
+    @close="onClose"
+    :visible="show"
+    style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
         <a-col :span="12">
-          <a-form-item label='公告标题' v-bind="formItemLayout">
+          <a-form-item label='车店名称' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'title',
+            'name',
             { rules: [{ required: true, message: '请输入名称!' }] }
             ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='上传人' v-bind="formItemLayout">
+          <a-form-item label='车店地址'>
+            <a-input-search
+              v-decorator="[
+              'shopAddress'
+              ]"
+              enter-button="选择"
+              @search="showChildrenDrawer"
+            />
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label='负责人' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'publisher',
-            { rules: [{ required: true, message: '请输入上传人!' }] }
+            'principal',
+            { rules: [{ required: true, message: '请输入负责人!' }] }
             ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='上下架' v-bind="formItemLayout">
-            <a-select v-decorator="[
-              'type',
-              { rules: [{ required: true, message: '请输入上下架!' }] }
-              ]">
-              <a-select-option value="1">上架</a-select-option>
-              <a-select-option value="2">下架</a-select-option>
-            </a-select>
+          <a-form-item label='联系电话' v-bind="formItemLayout">
+            <a-input v-decorator="[
+            'phone',
+            { rules: [{ required: true, message: '请输入联系电话!' }] }
+            ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='公告状态' v-bind="formItemLayout">
+          <a-form-item label='营业状态' v-bind="formItemLayout">
             <a-select v-decorator="[
-              'rackUp',
-              { rules: [{ required: true, message: '请输入公告状态!' }] }
+              'delFlag',
+              { rules: [{ required: true, message: '请输入营业状态!' }] }
               ]">
-              <a-select-option value="0">下架</a-select-option>
-              <a-select-option value="1">已发布</a-select-option>
+              <a-select-option value="0">休息</a-select-option>
+              <a-select-option value="1">营业</a-select-option>
             </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :span="24">
-          <a-form-item label='公告内容' v-bind="formItemLayout">
-            <a-textarea :rows="6" v-decorator="[
-            'content',
-             { rules: [{ required: true, message: '请输入名称!' }] }
-            ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="24">
@@ -80,10 +80,21 @@
         </a-col>
       </a-row>
     </a-form>
-  </a-modal>
+    <drawerMap :childrenDrawerShow="childrenDrawer" @handlerClosed="handlerClosed"></drawerMap>
+    <div class="drawer-bootom-button">
+      <a-popconfirm title="确定放弃编辑？" @confirm="onClose" okText="确定" cancelText="取消">
+        <a-button style="margin-right: .8rem">取消</a-button>
+      </a-popconfirm>
+      <a-button key="submit" type="primary" :loading="loading" @click="handleSubmit">
+        提交
+      </a-button>
+    </div>
+  </a-drawer>
 </template>
 
 <script>
+import baiduMap from '@/utils/map/baiduMap'
+import drawerMap from '@/utils/map/searchmap/drawerMap'
 import {mapState} from 'vuex'
 function getBase64 (file) {
   return new Promise((resolve, reject) => {
@@ -98,11 +109,14 @@ const formItemLayout = {
   wrapperCol: { span: 24 }
 }
 export default {
-  name: 'BulletinAdd',
+  name: 'shopAdd',
   props: {
-    bulletinAddVisiable: {
+    shopAddVisiable: {
       default: false
     }
+  },
+  components: {
+    drawerMap
   },
   computed: {
     ...mapState({
@@ -110,7 +124,7 @@ export default {
     }),
     show: {
       get: function () {
-        return this.bulletinAddVisiable
+        return this.shopAddVisiable
       },
       set: function () {
       }
@@ -123,10 +137,46 @@ export default {
       loading: false,
       fileList: [],
       previewVisible: false,
-      previewImage: ''
+      previewImage: '',
+      localPoint: {},
+      stayAddress: '',
+      childrenDrawer: false
     }
   },
   methods: {
+    handlerClosed (localPoint) {
+      this.childrenDrawer = false
+      if (localPoint !== null && localPoint !== undefined) {
+        this.localPoint = localPoint
+        console.log(this.localPoint)
+
+        let address = baiduMap.getAddress(localPoint)
+        address.getLocation(localPoint, (rs) => {
+          if (rs != null) {
+            if (rs.address !== undefined && rs.address.length !== 0) {
+              this.stayAddress = rs.address
+            }
+            if (rs.surroundingPois !== undefined) {
+              if (rs.surroundingPois.address !== undefined && rs.surroundingPois.address.length !== 0) {
+                this.stayAddress = rs.surroundingPois.address
+              }
+            }
+            let obj = {}
+            obj['shopAddress'] = this.stayAddress
+            obj['longitude'] = localPoint.lng
+            obj['latitude'] = localPoint.lat
+            this.form.setFieldsValue(obj)
+          }
+        })
+      }
+    },
+    showChildrenDrawer (value) {
+      this.flagType = value
+      this.childrenDrawer = true
+    },
+    onChildrenDrawerClos () {
+      this.childrenDrawer = false
+    },
     handleCancel () {
       this.previewVisible = false
     },
@@ -158,7 +208,7 @@ export default {
         values.images = images.length > 0 ? images.join(',') : null
         if (!err) {
           this.loading = true
-          this.$post('/cos/bulletin-info', {
+          this.$post('/cos/shop-info', {
             ...values
           }).then((r) => {
             this.reset()

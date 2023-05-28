@@ -6,7 +6,7 @@
     <select id="selectShopPage" resultType="java.util.LinkedHashMap">
         select
         id,
-        shop_code,
+        shop_adress,
         name,
         code,
         images,
@@ -14,7 +14,9 @@
         create_date,
         del_flag,
         principal,
-        phone
+        phone,
+        longitude,
+        latitude
         from
         shop_info
         where

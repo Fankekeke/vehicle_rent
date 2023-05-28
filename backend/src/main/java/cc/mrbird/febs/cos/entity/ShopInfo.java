@@ -1,5 +1,6 @@
 package cc.mrbird.febs.cos.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -30,7 +31,7 @@ public class ShopInfo implements Serializable {
     /**
      * 车店编号
      */
-    private String shopCode;
+    private String shopAddress;
 
     /**
      * 车店名称
@@ -71,6 +72,16 @@ public class ShopInfo implements Serializable {
      * 联系电话
      */
     private String phone;
+
+    /**
+     * 经度
+     */
+    private BigDecimal longitude;
+
+    /**
+     * 纬度
+     */
+    private BigDecimal latitude;
 
 
 }
