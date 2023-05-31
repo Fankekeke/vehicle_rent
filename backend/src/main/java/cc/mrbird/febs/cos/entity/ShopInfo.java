@@ -29,7 +29,7 @@ public class ShopInfo implements Serializable {
     private Integer id;
 
     /**
-     * 车店编号
+     * 车店地址
      */
     private String shopAddress;
 

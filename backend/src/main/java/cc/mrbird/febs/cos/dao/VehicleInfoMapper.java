@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author FanK
@@ -21,4 +22,12 @@ public interface VehicleInfoMapper extends BaseMapper<VehicleInfo> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectVehiclePage(Page<VehicleInfo> page, @Param("vehicleInfo") VehicleInfo vehicleInfo);
+
+    /**
+     * 根据车辆编号获取车辆维修记录
+     *
+     * @param vehicleNo 车辆编号
+     * @return 结果
+     */
+    List<LinkedHashMap<String, Object>> selectRepairByVehicle(@Param("vehicleNo") String vehicleNo);
 }

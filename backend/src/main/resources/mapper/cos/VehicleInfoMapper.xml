@@ -42,4 +42,31 @@
         order by
         create_date desc
     </select>
+
+    <!-- 根据车辆编号获取车辆维修记录 -->
+    <select id="selectRepairByVehicle" resultType="java.util.LinkedHashMap">
+        select
+        ri.id,
+        ri.vehicle_no,
+        ri.shop_code,
+        ri.reason,
+        ri.price,
+        ri.charge_person,
+        ri.repair_start,
+        ri.repair_end,
+        ri.repair_shop,
+        ri.shop_address,
+        ri.content,
+        ri.create_date,
+        si.name as shopName
+        from
+        repair_info ri
+        left join shop_info si on
+        (si.code = ri.shop_code)
+        where
+        1 = 1
+        and ri.vehicle_no = #{vehicleNo}
+        order by
+        ri.create_date desc
+    </select>
 </mapper>

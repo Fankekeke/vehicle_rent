@@ -113,5 +113,8 @@ public class VehicleInfo implements Serializable {
      */
     private String createDate;
 
-
+    /**
+     * 所属车店
+     */
+    private Integer shopId;
 }

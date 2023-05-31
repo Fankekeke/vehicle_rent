@@ -19,6 +19,16 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
+          <a-form-item label='所属车店' v-bind="formItemLayout">
+            <a-select v-decorator="[
+              'deptId',
+              { rules: [{ required: true, message: '请输入所属车店!' }] }
+              ]">
+              <a-select-option :value="item.id" v-for="(item, index) in shopList" :key="index">{{ item.name }}</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
           <a-form-item label='员工性别' v-bind="formItemLayout">
             <a-select v-decorator="[
               'sex',
@@ -26,17 +36,6 @@
               ]">
               <a-select-option value="1">男</a-select-option>
               <a-select-option value="2">女</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label='员工类型' v-bind="formItemLayout">
-            <a-select v-decorator="[
-              'type',
-              { rules: [{ required: true, message: '请输入员工类型!' }] }
-              ]">
-              <a-select-option value="1">司机</a-select-option>
-              <a-select-option value="2">搬运工</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
@@ -125,12 +124,19 @@ export default {
       fileList: [],
       previewVisible: false,
       previewImage: '',
-      pharmacyList: []
+      pharmacyList: [],
+      shopList: []
     }
   },
   mounted () {
+    this.selectShopList()
   },
   methods: {
+    selectShopList () {
+      this.$get(`/cos/shop-info/list`).then((r) => {
+        this.shopList = r.data.data
+      })
+    },
     handleCancel () {
       this.previewVisible = false
     },
@@ -170,10 +176,10 @@ export default {
     },
     setFormValues ({...staff}) {
       this.rowId = staff.id
-      let fields = ['name', 'status', 'sex', 'type']
+      let fields = ['name', 'status', 'sex', 'deptId']
       let obj = {}
       Object.keys(staff).forEach((key) => {
-        if (key === 'sex' || key === 'status' || 'type') {
+        if (key === 'sex' || key === 'status' || 'deptId') {
           staff[key] = staff[key].toString()
         }
         if (key === 'images') {

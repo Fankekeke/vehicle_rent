@@ -3,13 +3,9 @@ package cc.mrbird.febs.cos.service.impl;
 import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.cos.dao.OrderInfoMapper;
 import cc.mrbird.febs.cos.dao.RepairInfoMapper;
-import cc.mrbird.febs.cos.entity.OrderInfo;
-import cc.mrbird.febs.cos.entity.RepairInfo;
-import cc.mrbird.febs.cos.entity.VehicleInfo;
+import cc.mrbird.febs.cos.entity.*;
 import cc.mrbird.febs.cos.dao.VehicleInfoMapper;
-import cc.mrbird.febs.cos.service.IOrderInfoService;
-import cc.mrbird.febs.cos.service.IRepairInfoService;
-import cc.mrbird.febs.cos.service.IVehicleInfoService;
+import cc.mrbird.febs.cos.service.*;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
@@ -38,6 +34,15 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
     private final IRepairInfoService repairInfoService;
 
     private final IOrderInfoService orderInfoService;
+
+    private final IPaymentRecordService paymentRecordService;
+
+    private final IUserInfoService userInfoService;
+
+    private final IShopInfoService shopInfoService;
+
+    private final IOrderEvaluateService orderEvaluateService;
+
 
     /**
      * 分页获取车辆信息
@@ -68,6 +73,85 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
             throw new FebsException("车辆编号重复！");
         }
         return this.save(vehicleInfo);
+    }
+
+    /**
+     * 缴费信息详情
+     *
+     * @param id 缴费信息ID
+     * @return 结果
+     */
+    @Override
+    public LinkedHashMap<String, Object> selectPaymentRecordDetail(Integer id) throws FebsException {
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
+            {
+                put("payment", null);
+                put("order", null);
+                put("vehicle", null);
+                put("user", null);
+            }
+        };
+        // 获取缴费信息
+        PaymentRecord paymentRecord = paymentRecordService.getById(id);
+        if (paymentRecord == null) {
+            throw new FebsException("缴费信息不存在！");
+        }
+        result.put("payment", paymentRecord);
+
+        // 订单信息
+        OrderInfo orderInfo = orderInfoService.getById(paymentRecord.getOrderId());
+        result.put("order", orderInfo);
+        // 用户信息
+        UserInfo userInfo = userInfoService.getById(orderInfo.getUserId());
+        result.put("user", userInfo);
+        // 车辆信息
+        VehicleInfo vehicle = this.getOne(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, orderInfo.getVehicleNo()));
+        result.put("vehicle", vehicle);
+        return result;
+    }
+
+    /**
+     * 车辆维修信息详情
+     *
+     * @param id 维修信息ID
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    @Override
+    public LinkedHashMap<String, Object> selectVehicleRepairDetail(Integer id) throws FebsException {
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
+            {
+                put("vehicle", null);
+                put("repair", null);
+                put("shop", null);
+            }
+        };
+        // 维修信息
+        RepairInfo repairInfo = repairInfoService.getById(id);
+        if (repairInfo == null) {
+            throw new FebsException("维修信息不存在！");
+        }
+        result.put("repair", repairInfo);
+        // 车辆信息
+        VehicleInfo vehicleInfo = this.getOne(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, repairInfo.getVehicleNo()));
+        result.put("vehicle", vehicleInfo);
+        // 车店信息
+        ShopInfo shopInfo = shopInfoService.getById(vehicleInfo.getShopId());
+        result.put("shop", shopInfo);
+        return result;
+    }
+
+    /**
+     * 根据车辆编号获取车辆维修记录
+     *
+     * @param vehicleNo 车辆编号
+     * @return 结果
+     */
+    @Override
+    public List<LinkedHashMap<String, Object>> selectRepairByVehicle(String vehicleNo) {
+        return baseMapper.selectRepairByVehicle(vehicleNo);
     }
 
     /**

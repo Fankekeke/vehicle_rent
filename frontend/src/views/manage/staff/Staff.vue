@@ -21,6 +21,17 @@
                 <a-input v-model="queryParams.code"/>
               </a-form-item>
             </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="员工状态"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-select v-model="queryParams.status" allowClear>
+                  <a-select-option value="1">在职</a-select-option>
+                  <a-select-option value="2">离职</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
           </div>
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询</a-button>
@@ -124,19 +135,6 @@ export default {
         title: '员工编号',
         dataIndex: 'code'
       }, {
-        title: '员工类型',
-        dataIndex: 'type',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 1:
-              return <a-tag>司机</a-tag>
-            case 2:
-              return <a-tag>搬运工</a-tag>
-            default:
-              return '- -'
-          }
-        }
-      }, {
         title: '性别',
         dataIndex: 'sex',
         customRender: (text, row, index) => {
@@ -172,6 +170,26 @@ export default {
               return <a-tag color="red">离职</a-tag>
             default:
               return '- -'
+          }
+        }
+      }, {
+        title: '车店编号',
+        dataIndex: 'shopCode',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '所属车店',
+        dataIndex: 'shopName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
           }
         }
       }, {
@@ -314,6 +332,9 @@ export default {
         // 如果分页信息为空，则设置为默认值
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
+      }
+      if (params.status === undefined) {
+        delete params.status
       }
       this.$get('/cos/staff-info/page', {
         ...params

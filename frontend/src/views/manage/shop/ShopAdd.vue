@@ -30,6 +30,22 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
+          <a-form-item label='经度' v-bind="formItemLayout">
+            <a-input v-decorator="[
+            'longitude',
+            { rules: [{ required: true, message: '请输入经度!' }] }
+            ]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label='纬度' v-bind="formItemLayout">
+            <a-input v-decorator="[
+            'latitude',
+            { rules: [{ required: true, message: '请输入纬度!' }] }
+            ]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
           <a-form-item label='负责人' v-bind="formItemLayout">
             <a-input v-decorator="[
             'principal',

@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author FanK
@@ -19,7 +20,7 @@ public interface IVehicleInfoService extends IService<VehicleInfo> {
     /**
      * 分页获取车辆信息
      *
-     * @param page      分页对象
+     * @param page        分页对象
      * @param vehicleInfo 车辆信息
      * @return 结果
      */
@@ -32,6 +33,32 @@ public interface IVehicleInfoService extends IService<VehicleInfo> {
      * @return 结果
      */
     boolean vehicleAdd(VehicleInfo vehicleInfo) throws FebsException;
+
+    /**
+     * 缴费信息详情
+     *
+     * @param id 缴费信息ID
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    LinkedHashMap<String, Object> selectPaymentRecordDetail(Integer id) throws FebsException;
+
+    /**
+     * 车辆维修信息详情
+     *
+     * @param id 维修信息ID
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    LinkedHashMap<String, Object> selectVehicleRepairDetail(Integer id) throws FebsException;
+
+    /**
+     * 根据车辆编号获取车辆维修记录
+     *
+     * @param vehicleNo 车辆编号
+     * @return 结果
+     */
+    List<LinkedHashMap<String, Object>> selectRepairByVehicle(String vehicleNo);
 
     /**
      * 根据车辆编号获取日历看板

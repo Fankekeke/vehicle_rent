@@ -24,6 +24,7 @@
         oi.create_date,
         oi.remark,
         ui.name as userName,
+        ui.phone,
         vi.vehicle_number,
         vi.name as vehicleName,
         vi.images
