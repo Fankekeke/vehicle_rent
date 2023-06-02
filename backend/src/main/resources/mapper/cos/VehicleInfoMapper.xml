@@ -5,42 +5,50 @@
     <!-- 分页获取车辆信息 -->
     <select id="selectVehiclePage" resultType="java.util.LinkedHashMap">
         select
-        id,
-        vehicle_no,
-        vehicle_number,
-        vehicle_color,
-        name,
-        engine_no,
-        carry_passengers,
-        principal,
-        brand,
-        phone,
-        status,
-        factory_date,
-        use_type,
-        emission_standard,
-        fuel_type,
-        images,
-        content,
-        create_date
+        vi.id,
+        vi.vehicle_no,
+        vi.vehicle_number,
+        vi.vehicle_color,
+        vi.name,
+        vi.engine_no,
+        vi.carry_passengers,
+        vi.principal,
+        vi.brand,
+        vi.phone,
+        vi.status,
+        vi.factory_date,
+        vi.use_type,
+        vi.emission_standard,
+        vi.fuel_type,
+        vi.images,
+        vi.content,
+        vi.create_date,
+        vi.shop_id,
+        si.name as shopName,
+        bi.name as brandName,
+        vti.name as typeName
         from
-        vehicle_info
+        vehicle_info vi
+        LEFT JOIN shop_info si ON (si.id = vi.shop_id)
+        LEFT JOIN brand_info bi ON (bi.id = vi.brand)
+        LEFT JOIN vehicle_type_info vti ON (vti.id = vi.use_type)
+        LEFT JOIN
         where
         1 = 1
         <if test="vehicleInfo.vehicleNumber != null and vehicleInfo.vehicleNumber != ''">
-            AND vehicle_number LIKE CONCAT('%',#{vehicleInfo.vehicleNumber},'%')
+            AND vi.vehicle_number LIKE CONCAT('%',#{vehicleInfo.vehicleNumber},'%')
         </if>
         <if test="vehicleInfo.name != null and vehicleInfo.name != ''">
-            AND name LIKE CONCAT('%',#{vehicleInfo.name},'%')
+            AND vi.name LIKE CONCAT('%',#{vehicleInfo.name},'%')
         </if>
         <if test="vehicleInfo.engineNo != null and vehicleInfo.engineNo != ''">
-            AND engine_no LIKE CONCAT('%',#{vehicleInfo.engineNo},'%')
+            AND vi.engine_no LIKE CONCAT('%',#{vehicleInfo.engineNo},'%')
         </if>
         <if test="vehicleInfo.brand != null and vehicleInfo.brand != ''">
-            AND brand = #{vehicleInfo.brand}
+            AND vi.brand = #{vehicleInfo.brand}
         </if>
         order by
-        create_date desc
+        vi.create_date desc
     </select>
 
     <!-- 根据车辆编号获取车辆维修记录 -->

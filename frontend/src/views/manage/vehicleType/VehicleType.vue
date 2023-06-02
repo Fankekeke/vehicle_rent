@@ -7,7 +7,7 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="车店编号"
+                label="类型编号"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.code"/>
@@ -15,29 +15,10 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="车店名称"
+                label="类型名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.name"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
-                label="负责人"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.principal"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
-                label="营业状态"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-select v-model="queryParams.delFlag" allowClear>
-                  <a-select-option value="0">休息</a-select-option>
-                  <a-select-option value="1">营业</a-select-option>
-                </a-select>
               </a-form-item>
             </a-col>
           </div>
@@ -68,50 +49,40 @@
         </template>
       </a-table>
     </div>
-    <shop-add
-      v-if="shopAdd.visiable"
-      @close="handleshopAddClose"
-      @success="handleshopAddSuccess"
-      :shopAddVisiable="shopAdd.visiable">
-    </shop-add>
-    <shop-edit
-      ref="shopEdit"
-      @close="handleshopEditClose"
-      @success="handleshopEditSuccess"
-      :shopEditVisiable="shopEdit.visiable">
-    </shop-edit>
-    <shop-view
-      @close="handleshopViewClose"
-      :shopShow="shopView.visiable"
-      :shopData="shopView.data">
-    </shop-view>
+    <vehicleType-add
+      v-if="vehicleTypeAdd.visiable"
+      @close="handlevehicleTypeAddClose"
+      @success="handlevehicleTypeAddSuccess"
+      :vehicleTypeAddVisiable="vehicleTypeAdd.visiable">
+    </vehicleType-add>
+    <vehicleType-edit
+      ref="vehicleTypeEdit"
+      @close="handlevehicleTypeEditClose"
+      @success="handlevehicleTypeEditSuccess"
+      :vehicleTypeEditVisiable="vehicleTypeEdit.visiable">
+    </vehicleType-edit>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
-import shopAdd from './ShopAdd.vue'
-import shopEdit from './ShopEdit.vue'
-import shopView from './ShopView.vue'
+import vehicleTypeAdd from './VehicleTypeAdd.vue'
+import vehicleTypeEdit from './VehicleTypeEdit.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'shop',
-  components: {shopAdd, shopEdit, shopView, RangeDate},
+  name: 'vehicleType',
+  components: {vehicleTypeAdd, vehicleTypeEdit, RangeDate},
   data () {
     return {
       advanced: false,
-      shopAdd: {
+      vehicleTypeAdd: {
         visiable: false
       },
-      shopEdit: {
+      vehicleTypeEdit: {
         visiable: false
-      },
-      shopView: {
-        visiable: false,
-        data: null
       },
       queryParams: {},
       filteredInfo: null,
@@ -137,59 +108,54 @@ export default {
     }),
     columns () {
       return [{
-        title: '车店编号',
+        title: '类型编号',
         dataIndex: 'code'
       }, {
-        title: '车店名称',
+        title: '类型名称',
         dataIndex: 'name'
+      }, {
+        title: '车门数',
+        dataIndex: 'doors',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '座位数',
+        dataIndex: 'seats',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '适合行李数',
+        dataIndex: 'luggage',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '出行类别',
+        dataIndex: 'travelCategory',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
       }, {
         title: '创建时间',
         dataIndex: 'createDate',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '车店图片',
-        dataIndex: 'images',
-        customRender: (text, record, index) => {
-          if (!record.images) return <a-avatar shape="square" icon="user" />
-          return <a-popover>
-            <template slot="content">
-              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
-            </template>
-            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
-          </a-popover>
-        }
-      }, {
-        title: '营业状态',
-        dataIndex: 'delFlag',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case '0':
-              return <a-tag color="red">休息</a-tag>
-            case '1':
-              return <a-tag color="blue">营业</a-tag>
-            default:
-              return '- -'
-          }
-        }
-      }, {
-        title: '负责人',
-        dataIndex: 'principal',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '联系电话',
-        dataIndex: 'phone',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -215,26 +181,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.shopAdd.visiable = true
+      this.vehicleTypeAdd.visiable = true
     },
-    handleshopAddClose () {
-      this.shopAdd.visiable = false
+    handlevehicleTypeAddClose () {
+      this.vehicleTypeAdd.visiable = false
     },
-    handleshopAddSuccess () {
-      this.shopAdd.visiable = false
-      this.$message.success('新增车店成功')
+    handlevehicleTypeAddSuccess () {
+      this.vehicleTypeAdd.visiable = false
+      this.$message.success('新增车辆类型成功')
       this.search()
     },
     edit (record) {
-      this.$refs.shopEdit.setFormValues(record)
-      this.shopEdit.visiable = true
+      this.$refs.vehicleTypeEdit.setFormValues(record)
+      this.vehicleTypeEdit.visiable = true
     },
-    handleshopEditClose () {
-      this.shopEdit.visiable = false
+    handlevehicleTypeEditClose () {
+      this.vehicleTypeEdit.visiable = false
     },
-    handleshopEditSuccess () {
-      this.shopEdit.visiable = false
-      this.$message.success('修改车店成功')
+    handlevehicleTypeEditSuccess () {
+      this.vehicleTypeEdit.visiable = false
+      this.$message.success('修改车辆类型成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -252,7 +218,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/shop-info/' + ids).then(() => {
+          that.$delete('/cos/vehicle-type-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -322,10 +288,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      if (params.delFlag === undefined) {
-        delete params.delFlag
-      }
-      this.$get('/cos/shop-info/page', {
+      this.$get('/cos/vehicleType-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

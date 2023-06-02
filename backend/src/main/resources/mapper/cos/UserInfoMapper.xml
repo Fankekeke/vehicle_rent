@@ -15,7 +15,8 @@
         area,
         address,
         user_id,
-        create_date
+        create_date,
+        images
         from
         user_info
         where

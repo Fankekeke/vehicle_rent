@@ -6,7 +6,7 @@
     <select id="selectShopPage" resultType="java.util.LinkedHashMap">
         select
         id,
-        shop_adress,
+        shop_address,
         name,
         code,
         images,

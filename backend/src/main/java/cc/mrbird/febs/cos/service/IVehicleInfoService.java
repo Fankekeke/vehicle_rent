@@ -44,6 +44,15 @@ public interface IVehicleInfoService extends IService<VehicleInfo> {
     LinkedHashMap<String, Object> selectPaymentRecordDetail(Integer id) throws FebsException;
 
     /**
+     * 车辆信息详情
+     *
+     * @param vehicleNo 车辆编号
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    LinkedHashMap<String, Object> selectVehicleDetail(String vehicleNo) throws FebsException;
+
+    /**
      * 车辆维修信息详情
      *
      * @param id 维修信息ID

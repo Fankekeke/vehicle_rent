@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.VehicleTypeInfoMapper">
+
+    <!-- 分页获取车辆类型信息 -->
+    <select id="selectVehicleTypePage" resultType="java.util.LinkedHashMap">
+        select
+        id,
+        code,
+        name,
+        doors,
+        seats,
+        luggage,
+        travel_category,
+        create_date
+        from
+        vehicle_type_info
+        where
+        1 = 1
+        <if test="vehicleTypeInfo.code != null and vehicleTypeInfo.code != ''">
+            AND code LIKE CONCAT('%',#{vehicleTypeInfo.code},'%')
+        </if>
+        <if test="vehicleTypeInfo.name != null and vehicleTypeInfo.name != ''">
+            AND name LIKE CONCAT('%',#{vehicleTypeInfo.name},'%')
+        </if>
+        order by
+        create_date desc
+    </select>
+</mapper>

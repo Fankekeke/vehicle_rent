@@ -43,6 +43,10 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
 
     private final IOrderEvaluateService orderEvaluateService;
 
+    private final IVehicleTypeInfoService vehicleTypeInfoService;
+
+    private final IBrandInfoService brandInfoService;
+
 
     /**
      * 分页获取车辆信息
@@ -108,6 +112,44 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         // 车辆信息
         VehicleInfo vehicle = this.getOne(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, orderInfo.getVehicleNo()));
         result.put("vehicle", vehicle);
+        return result;
+    }
+
+    /**
+     * 车辆信息详情
+     *
+     * @param vehicleNo 车辆编号
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    @Override
+    public LinkedHashMap<String, Object> selectVehicleDetail(String vehicleNo) throws FebsException {
+        if (StrUtil.isEmpty(vehicleNo)) {
+            throw new FebsException("参数不能为空！");
+        }
+        // 获取车辆信息
+        VehicleInfo vehicleInfo = this.getOne(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, vehicleNo));
+        if (vehicleInfo == null) {
+            throw new FebsException("信息不存在！");
+        }
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
+            {
+                put("vehicle", vehicleInfo);
+                put("shop", null);
+                put("brand", null);
+                put("type", null);
+            }
+        };
+        // 车店信息
+        ShopInfo shopInfo = shopInfoService.getById(vehicleInfo.getShopId());
+        // 品牌信息
+        BrandInfo brandInfo = brandInfoService.getById(vehicleInfo.getBrand());
+        // 车辆类型
+        VehicleTypeInfo vehicleType = vehicleTypeInfoService.getById(vehicleInfo.getUseType());
+        result.put("shop", shopInfo);
+        result.put("brand", brandInfo);
+        result.put("type", vehicleType);
         return result;
     }
 

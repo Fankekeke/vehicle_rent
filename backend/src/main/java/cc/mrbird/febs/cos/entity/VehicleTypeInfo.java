@@ -10,14 +10,14 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 用户管理
+ * 车辆类型
  *
  * @author FanK
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class UserInfo implements Serializable {
+public class VehicleTypeInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,57 +28,39 @@ public class UserInfo implements Serializable {
     private Integer id;
 
     /**
-     * 会员编号
+     * 类型编号
      */
     private String code;
 
     /**
-     * 用户姓名
+     * 车辆类型名称
      */
     private String name;
 
     /**
-     * 邮箱地址
+     * 车门数
      */
-    private String mail;
+    private Integer doors;
 
     /**
-     * 联系电话
+     * 车座数
      */
-    private String phone;
+    private Integer seats;
 
     /**
-     * 省份
+     * 适合行李数
      */
-    private String province;
+    private String luggage;
 
     /**
-     * 市区
+     * 出行类别
      */
-    private String city;
-
-    /**
-     * 区
-     */
-    private String area;
-
-    /**
-     * 详细地址
-     */
-    private String address;
-
-    /**
-     * 所属账户
-     */
-    private Long userId;
+    private String travelCategory;
 
     /**
      * 创建时间
      */
     private String createDate;
 
-    /**
-     * 用户头像
-     */
-    private String images;
+
 }
