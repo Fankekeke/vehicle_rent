@@ -1,34 +1,34 @@
 <template>
-  <a-modal v-model="show" title="车店详情" @cancel="onClose" :width="900">
+  <a-modal v-model="show" title="车辆详情" @cancel="onClose" :width="1200">
     <template slot="footer">
       <a-button key="back" @click="onClose" type="danger">
         关闭
       </a-button>
     </template>
-    <div style="font-size: 13px;font-family: SimHei" v-if="shopData !== null">
+    <div style="font-size: 13px;font-family: SimHei" v-if="vehicleData !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">基础信息</span></a-col>
-        <a-col :span="8"><b>车店编号：</b>
-          {{ shopData.code }}
+        <a-col :span="8"><b>车辆编号：</b>
+          {{ vehicleData.code }}
         </a-col>
-        <a-col :span="8"><b>车店名称：</b>
-          {{ shopData.name ? shopData.name : '- -' }}
+        <a-col :span="8"><b>车辆名称：</b>
+          {{ vehicleData.name ? vehicleData.name : '- -' }}
         </a-col>
-        <a-col :span="8"><b>车店地址：</b>
-          {{ shopData.shopAddress ? shopData.shopAddress : '- -' }}
+        <a-col :span="8"><b>车辆地址：</b>
+          {{ vehicleData.vehicleAddress ? vehicleData.vehicleAddress : '- -' }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="8"><b>负责人：</b>
-          {{ shopData.principal }} 元
+          {{ vehicleData.principal }} 元
         </a-col>
         <a-col :span="8"><b>联系电话：</b>
-          {{ shopData.phone }}
+          {{ vehicleData.phone }}
         </a-col>
         <a-col :span="8"><b>营业状态：</b>
-          <span v-if="shopData.delFlag == 0" style="color: red">休息</span>
-          <span v-if="shopData.delFlag == 1" style="color: green">营业</span>
+          <span v-if="vehicleData.delFlag == 0" style="color: red">休息</span>
+          <span v-if="vehicleData.delFlag == 1" style="color: green">营业</span>
         </a-col>
       </a-row>
       <br/>
@@ -75,20 +75,20 @@ function getBase64 (file) {
   })
 }
 export default {
-  name: 'ShopView',
+  name: 'vehicleView',
   props: {
-    shopShow: {
+    vehicleShow: {
       type: Boolean,
       default: false
     },
-    shopData: {
+    vehicleData: {
       type: Object
     }
   },
   computed: {
     show: {
       get: function () {
-        return this.shopShow
+        return this.vehicleShow
       },
       set: function () {
       }
@@ -104,32 +104,44 @@ export default {
       reserveInfo: null,
       durgList: [],
       logisticsList: [],
-      userInfo: null
+      userInfo: null,
+      vehicleInfo: null,
+      shopInfo: null,
+      brandInfo: null,
+      typeInfo: null
     }
   },
   watch: {
-    shopShow: function (value) {
+    vehicleShow: function (value) {
       if (value) {
-        this.imagesInit(this.shopData.images)
+        this.imagesInit(this.vehicleData.images)
         setTimeout(() => {
           baiduMap.initMap('areas')
           setTimeout(() => {
-            this.local(this.shopData)
+            this.local(this.vehicleData)
           }, 500)
         }, 200)
       }
     }
   },
   methods: {
-    local (shopData) {
+    local (vehicleData) {
       baiduMap.clearOverlays()
       baiduMap.rMap().enableScrollWheelZoom(true)
       // eslint-disable-next-line no-undef
-      let point = new BMap.Point(shopData.longitude, shopData.latitude)
+      let point = new BMap.Point(vehicleData.longitude, vehicleData.latitude)
       baiduMap.pointAdd(point)
       baiduMap.findPoint(point, 16)
       // let driving = new BMap.DrivingRoute(baiduMap.rMap(), {renderOptions:{map: baiduMap.rMap(), autoViewport: true}});
       // driving.search(new BMap.Point(this.nowPoint.lng,this.nowPoint.lat), new BMap.Point(scenic.point.split(",")[0],scenic.point.split(",")[1]));
+    },
+    dataInit (vehicleNo) {
+      this.$get(`/cos/vehicle-info/detail/${vehicleNo}`).then((r) => {
+        this.vehicleInfo = r.data.vehicle
+        this.shopInfo = r.data.shop
+        this.brandInfo = r.data.brand
+        this.typeInfo = r.data.type
+      })
     },
     imagesInit (images) {
       if (images !== null && images !== '') {

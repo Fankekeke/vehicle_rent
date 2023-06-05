@@ -50,6 +50,18 @@ public class VehicleInfoController {
     }
 
     /**
+     * 车辆信息详情
+     *
+     * @param vehicleNo 车辆编号
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    @GetMapping("/detail/{vehicleNo}")
+    public R selectVehicleDetail(@PathVariable("vehicleNo") String vehicleNo) throws FebsException {
+        return R.ok(vehicleInfoService.selectVehicleDetail(vehicleNo));
+    }
+
+    /**
      * 添加订单信息
      *
      * @param orderInfo 车辆订单信息
