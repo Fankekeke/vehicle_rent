@@ -5,30 +5,59 @@
         关闭
       </a-button>
     </template>
-    <div style="font-size: 13px;font-family: SimHei" v-if="vehicleData !== null">
+    <div style="font-size: 13px;font-family: SimHei" v-if="vehicleInfo !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">基础信息</span></a-col>
-        <a-col :span="8"><b>车辆编号：</b>
-          {{ vehicleData.code }}
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">车辆信息</span></a-col>
+        <a-col :span="6"><b>车辆编号：</b>
+          {{ vehicleInfo.vehicleNo }}
         </a-col>
-        <a-col :span="8"><b>车辆名称：</b>
-          {{ vehicleData.name ? vehicleData.name : '- -' }}
+        <a-col :span="6"><b>车牌号：</b>
+          {{ vehicleInfo.vehicleNumber ? vehicleInfo.vehicleNumber : '- -' }}
         </a-col>
-        <a-col :span="8"><b>车辆地址：</b>
-          {{ vehicleData.vehicleAddress ? vehicleData.vehicleAddress : '- -' }}
+        <a-col :span="6"><b>车辆颜色：</b>
+          {{ vehicleInfo.vehicleColor ? vehicleInfo.vehicleColor : '- -' }}
+        </a-col>
+        <a-col :span="6"><b>车辆名称：</b>
+          {{ vehicleInfo.name }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="8"><b>负责人：</b>
-          {{ vehicleData.principal }} 元
+        <a-col :span="6"><b>载客数量：</b>
+          {{ vehicleInfo.carryPassengers }}
         </a-col>
-        <a-col :span="8"><b>联系电话：</b>
-          {{ vehicleData.phone }}
+        <a-col :span="6"><b>发动机号码：</b>
+          {{ vehicleInfo.engineNo }}
         </a-col>
-        <a-col :span="8"><b>营业状态：</b>
-          <span v-if="vehicleData.delFlag == 0" style="color: red">休息</span>
-          <span v-if="vehicleData.delFlag == 1" style="color: green">营业</span>
+        <a-col :span="6"><b>车辆状态：</b>
+          <span v-if="vehicleInfo.status == 0" style="color: red">空闲</span>
+          <span v-if="vehicleInfo.status == 1" style="color: green">使用中</span>
+          <span v-if="vehicleInfo.status == 2" style="color: green">维修中</span>
+          <span v-if="vehicleInfo.status == 3" style="color: green">已报废</span>
+        </a-col>
+        <a-col :span="6"><b>负责人：</b>
+          {{ vehicleInfo.principal }}
+        </a-col>
+      </a-row>
+      <br/>
+      <a-row style="padding-left: 24px;padding-right: 24px;">  
+        <a-col :span="6"><b>联系电话：</b>
+          {{ vehicleInfo.phone }}
+        </a-col>
+        <a-col :span="6"><b>出厂日期：</b>
+          {{ vehicleInfo.factoryDate }}
+        </a-col>
+        <a-col :span="6"><b>排放标准：</b>
+          {{ vehicleInfo.emissionStandard }}
+        </a-col>
+        <a-col :span="6"><b>燃料类型：</b>
+          <span v-if="vehicleInfo.fuelType == 1" style="color: green">燃油</span>
+          <span v-if="vehicleInfo.fuelType == 2" style="color: green">柴油</span>
+          <span v-if="vehicleInfo.fuelType == 3" style="color: green">油电混动</span>
+          <span v-if="vehicleInfo.fuelType == 4" style="color: green">电能</span>
+        </a-col>
+        <a-col :span="24"><b>备注：</b>
+          {{ vehicleInfo.content }}
         </a-col>
       </a-row>
       <br/>
@@ -50,14 +79,70 @@
         </a-col>
       </a-row>
       <br/>
-       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 5px"><span style="font-size: 15px;font-weight: 650;color: #000c17">药店位置</span></a-col>
+    </div>
+    <div style="font-size: 13px;font-family: SimHei" v-if="shopInfo !== null">
+      <a-row style="padding-left: 24px;padding-right: 24px;">
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">车店信息</span></a-col>
+        <a-col :span="6"><b>车店编号：</b>
+          {{ shopInfo.code }}
+        </a-col>
+        <a-col :span="6"><b>车店名称：</b>
+          {{ shopInfo.name ? shopInfo.name : '- -' }}
+        </a-col>
+        <a-col :span="6"><b>车店地址：</b>
+          {{ shopInfo.shopAddress ? shopInfo.shopAddress : '- -' }}
+        </a-col>
+         <a-col :span="6"><b>营业状态：</b>
+          <span v-if="shopInfo.delFlag == 0" style="color: red">休息</span>
+          <span v-if="shopInfo.delFlag == 1" style="color: green">营业</span>
+        </a-col>
       </a-row>
-      <div>
-        <a-card :bordered="false" style="height: 400px">
-          <div id="areas" style="width: 100%;height: 350px;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);background:#ec9e3c;color:#fff"></div>
-        </a-card>
-      </div>
+      <br/>
+      <a-row style="padding-left: 24px;padding-right: 24px;">  
+        <a-col :span="6"><b>负责人：</b>
+          {{ shopInfo.principal }}
+        </a-col>
+        <a-col :span="6"><b>联系电话：</b>
+          {{ shopInfo.phone }}
+        </a-col>
+      </a-row>
+    </div>
+    <div style="font-size: 13px;font-family: SimHei" v-if="brandInfo !== null">
+      <a-row style="padding-left: 24px;padding-right: 24px;">
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">车辆品牌</span></a-col>
+        <a-col :span="6"><b>品牌编号：</b>
+          {{ brandInfo.brandCode }}
+        </a-col>
+        <a-col :span="6"><b>车店名称：</b>
+          {{ brandInfo.name ? brandInfo.name : '- -' }}
+        </a-col>
+      </a-row>
+    </div>
+    <div style="font-size: 13px;font-family: SimHei" v-if="typeInfo !== null">
+      <a-row style="padding-left: 24px;padding-right: 24px;">
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">车辆类型</span></a-col>
+        <a-col :span="6"><b>类型编号：</b>
+          {{ typeInfo.code }}
+        </a-col>
+        <a-col :span="6"><b>车辆类型名称：</b>
+          {{ typeInfo.name ? brandInfo.name : '- -' }}
+        </a-col>
+        <a-col :span="6"><b>车门数：</b>
+          {{ typeInfo.doors ? brandInfo.doors : '- -' }}
+        </a-col>
+        <a-col :span="6"><b>车座数：</b>
+          {{ typeInfo.seats ? brandInfo.seats : '- -' }}
+        </a-col>  
+      </a-row>
+      <br/>
+      <a-row style="padding-left: 24px;padding-right: 24px;">  
+        <a-col :span="6"><b>适合行李数：</b>
+          {{ shopInfo.luggage }}
+        </a-col>
+        <a-col :span="6"><b>出行类别：</b>
+          {{ shopInfo.travelCategory }}
+        </a-col>
+      </a-row>
     </div>
   </a-modal>
 </template>

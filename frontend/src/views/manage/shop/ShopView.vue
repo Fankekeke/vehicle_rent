@@ -21,7 +21,7 @@
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="8"><b>负责人：</b>
-          {{ shopData.principal }} 元
+          {{ shopData.principal }}
         </a-col>
         <a-col :span="8"><b>联系电话：</b>
           {{ shopData.phone }}
