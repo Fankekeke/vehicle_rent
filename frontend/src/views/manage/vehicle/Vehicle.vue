@@ -89,6 +89,11 @@
       @success="handlevehicleEditSuccess"
       :vehicleEditVisiable="vehicleEdit.visiable">
     </vehicle-edit>
+    <vehicle-view
+      @close="handlevehicleViewClose"
+      :vehicleShow="vehicleView.visiable"
+      :vehicleData="vehicleView.data">
+    </vehicle-view>
   </a-card>
 </template>
 
@@ -96,13 +101,14 @@
 import RangeDate from '@/components/datetime/RangeDate'
 import vehicleAdd from './VehicleAdd'
 import vehicleEdit from './VehicleEdit'
+import vehicleView from './VehicleView'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
   name: 'vehicle',
-  components: {vehicleAdd, vehicleEdit, RangeDate},
+  components: {vehicleAdd, vehicleEdit, vehicleView, RangeDateVehicleView},
   data () {
     return {
       advanced: false,
@@ -111,6 +117,10 @@ export default {
       },
       vehicleEdit: {
         visiable: false
+      },
+      vehicleView: {
+        visiable: false,
+        data: null
       },
       queryParams: {},
       filteredInfo: null,
@@ -242,7 +252,14 @@ export default {
     this.selectShopList()
   },
   methods: {
-     selectShopList () {
+    handlevehicleViewClose () {
+      this.vehicleView.visiable = false
+    },
+    handlevehicleViewOpen (row) {
+      this.vehicleView.data = row
+      this.vehicleView.visiable = true
+    },
+    selectShopList () {
       this.$get(`/cos/brand-info/list`).then((r) => {
         this.brandList = r.data.data
       })
