@@ -133,7 +133,7 @@ export default {
   },
   methods: {
     selectShopList () {
-      this.$get(`/cos/shop-info/list`).then((r) => {
+      this.$get(`/cos/shop-info/datalist`).then((r) => {
         this.shopList = r.data.data
       })
     },

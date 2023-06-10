@@ -59,6 +59,16 @@ public class ShopInfoController {
     }
 
     /**
+     * 获取车店信息列表
+     *
+     * @return 结果
+     */
+    @GetMapping("/datalist")
+    public R listData() {
+        return R.ok(shopInfoService.list());
+    }
+
+    /**
      * 新增车店信息
      *
      * @param shopInfo 车店信息
