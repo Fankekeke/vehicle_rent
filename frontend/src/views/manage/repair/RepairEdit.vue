@@ -217,8 +217,11 @@ export default {
         values.id = this.rowId
         values.images = images.length > 0 ? images.join(',') : null
         if (!err) {
-          if (values.factoryDate) {
-            values.factoryDate = moment(values.factoryDate).format('YYYY-MM-DD')
+          if (values.repairStart) {
+            values.repairStart = moment(values.repairStart).format('YYYY-MM-DD')
+          }
+          if (values.repairEnd) {
+            values.repairEnd = moment(values.repairEnd).format('YYYY-MM-DD')
           }
           this.loading = true
           this.$put('/cos/repair-info', {
