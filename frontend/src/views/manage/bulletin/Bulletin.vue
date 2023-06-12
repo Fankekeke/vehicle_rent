@@ -62,7 +62,7 @@
               <template slot="title">
                 {{ record.content }}
               </template>
-              {{ record.content.slice(0, 30) }} ...
+              {{ record.content.slice(0, 40) }} ...
             </a-tooltip>
           </template>
         </template>
@@ -131,14 +131,11 @@ export default {
     columns () {
       return [{
         title: '标题',
-        dataIndex: 'title',
-        scopedSlots: { customRender: 'titleShow' },
-        width: 300
+        dataIndex: 'title'
       }, {
         title: '公告内容',
         dataIndex: 'content',
-        scopedSlots: { customRender: 'contentShow' },
-        width: 600
+        scopedSlots: { customRender: 'contentShow' }
       }, {
         title: '发布时间',
         dataIndex: 'createDate',
