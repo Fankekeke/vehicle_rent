@@ -7,22 +7,6 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="订单名称"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.orderName"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
-                label="客户名称"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.userName"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
                 label="车牌号码"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
@@ -37,6 +21,25 @@
                 <a-input v-model="queryParams.vehicleName"/>
               </a-form-item>
             </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="负责人"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.principal"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="维修状态"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-select v-model="queryParams.brand" allowClear>
+                  <a-select-option value="0">未完成</a-select-option>
+                  <a-select-option value="1">已完成</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
           </div>
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询</a-button>
@@ -47,6 +50,7 @@
     </div>
     <div>
       <div class="operator">
+        <a-button type="primary" ghost @click="add">新增</a-button>
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -59,38 +63,65 @@
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                :scroll="{ x: 900 }"
                @change="handleTableChange">
-        <template slot="contentShow" slot-scope="text, record">
+        <template slot="titleShow" slot-scope="text, record">
           <template>
             <a-tooltip>
               <template slot="title">
-                {{ record.remark }}
+                {{ record.title }}
               </template>
-              {{ record.remark.slice(0, 10) }} ...
+              {{ record.title.slice(0, 8) }} ...
             </a-tooltip>
           </template>
         </template>
+        <template slot="operation" slot-scope="text, record">
+          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改" style="margin-left: 15px"></a-icon>
+        </template>
       </a-table>
     </div>
+    <repair-add
+      v-if="repairAdd.visiable"
+      @close="handlerepairAddClose"
+      @success="handlerepairAddSuccess"
+      :repairAddVisiable="repairAdd.visiable">
+    </repair-add>
+    <repair-edit
+      ref="repairEdit"
+      @close="handlerepairEditClose"
+      @success="handlerepairEditSuccess"
+      :repairEditVisiable="repairEdit.visiable">
+    </repair-edit>
+    <repair-view
+      @close="handlerepairViewClose"
+      :repairShow="repairView.visiable"
+      :repairData="repairView.data">
+    </repair-view>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
+import repairAdd from './RepairAdd'
+import repairEdit from './RepairEdit'
+import repairView from './RepairView'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'evaluate',
-  components: {RangeDate},
+  name: 'repair',
+  components: {repairAdd, repairEdit, repairView, RangeDaterepairView},
   data () {
     return {
       advanced: false,
-      evaluateAdd: {
+      repairAdd: {
         visiable: false
       },
-      evaluateEdit: {
+      repairEdit: {
         visiable: false
+      },
+      repairView: {
+        visiable: false,
+        data: null
       },
       queryParams: {},
       filteredInfo: null,
@@ -107,7 +138,7 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
-      userList: []
+      brandList: []
     }
   },
   computed: {
@@ -116,67 +147,13 @@ export default {
     }),
     columns () {
       return [{
-        title: '订单编号',
-        dataIndex: 'orderCode'
-      }, {
-        title: '订单价格',
-        dataIndex: 'total',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text + '元'
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '评价客户',
-        dataIndex: 'userName'
-      }, {
-        title: '评价得分',
-        dataIndex: 'score',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text + '分'
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '订单名称',
-        dataIndex: 'orderName',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
+        title: '维修编号',
+        dataIndex: 'code'
       }, {
         title: '车牌号码',
-        dataIndex: 'vehicleNumber',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
+        dataIndex: 'vehicleNumber'
       }, {
-        title: '车辆名称',
-        dataIndex: 'vehicleName',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '评价内容',
-        dataIndex: 'remark',
-        scopedSlots: { customRender: 'contentShow' }
-      }, {
-        title: '评价图片',
+        title: '车辆照片',
         dataIndex: 'images',
         customRender: (text, record, index) => {
           if (!record.images) return <a-avatar shape="square" icon="user" />
@@ -188,8 +165,14 @@ export default {
           </a-popover>
         }
       }, {
-        title: '评价时间',
-        dataIndex: 'createDate',
+        title: '负责人',
+        dataIndex: 'principal'
+      }, {
+        title: '维修价格',
+        dataIndex: 'price'
+      }, {
+        title: '维修原因',
+        dataIndex: 'reason',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -197,6 +180,53 @@ export default {
             return '- -'
           }
         }
+      }, {
+        title: '维修状态',
+        dataIndex: 'status',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case 0:
+              return <a-tag>未完成</a-tag>
+            case 1:
+              return <a-tag>已完成</a-tag>
+            default:
+              return '- -'
+          }
+        }
+      }, {
+        title: '办理人',
+        dataIndex: 'chargePerson',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '维修开始时间',
+        dataIndex: 'repairStart',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '维修结束时间',
+        dataIndex: 'repairEnd',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '操作',
+        dataIndex: 'operation',
+        scopedSlots: {customRender: 'operation'}
       }]
     }
   },
@@ -204,6 +234,24 @@ export default {
     this.fetch()
   },
   methods: {
+    handlerepairViewClose () {
+      this.repairView.visiable = false
+    },
+    handlerepairViewOpen (row) {
+      this.repairView.data = row
+      this.repairView.visiable = true
+    },
+    selectShopList () {
+      this.$get(`/cos/brand-info/list`).then((r) => {
+        this.brandList = r.data.data
+      })
+    },
+    editStatus (row, status) {
+      this.$post('/cos/repair-info/account/status', { repairId: row.id, status }).then((r) => {
+        this.$message.success('修改成功')
+        this.fetch()
+      })
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -211,26 +259,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.evaluateAdd.visiable = true
+      this.repairAdd.visiable = true
     },
-    handleevaluateAddClose () {
-      this.evaluateAdd.visiable = false
+    handlerepairAddClose () {
+      this.repairAdd.visiable = false
     },
-    handleevaluateAddSuccess () {
-      this.evaluateAdd.visiable = false
-      this.$message.success('新增评价成功')
+    handlerepairAddSuccess () {
+      this.repairAdd.visiable = false
+      this.$message.success('新增维修成功')
       this.search()
     },
     edit (record) {
-      this.$refs.evaluateEdit.setFormValues(record)
-      this.evaluateEdit.visiable = true
+      this.$refs.repairEdit.setFormValues(record)
+      this.repairEdit.visiable = true
     },
-    handleevaluateEditClose () {
-      this.evaluateEdit.visiable = false
+    handlerepairEditClose () {
+      this.repairEdit.visiable = false
     },
-    handleevaluateEditSuccess () {
-      this.evaluateEdit.visiable = false
-      this.$message.success('修改评价成功')
+    handlerepairEditSuccess () {
+      this.repairEdit.visiable = false
+      this.$message.success('修改维修成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -248,7 +296,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/evaluate-info/' + ids).then(() => {
+          that.$delete('/cos/repair-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -318,10 +366,10 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      if (params.type === undefined) {
-        delete params.type
+      if (params.brand === undefined) {
+        delete params.brand
       }
-      this.$get('/cos/order-evaluate/page', {
+      this.$get('/cos/repair-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

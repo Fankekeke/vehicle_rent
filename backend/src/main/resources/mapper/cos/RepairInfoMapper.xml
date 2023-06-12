@@ -6,6 +6,7 @@
     <select id="selectRepairPage" resultType="java.util.LinkedHashMap">
         select
         ri.id,
+        ri.code,
         ri.vehicle_no,
         ri.shop_code,
         ri.reason,
@@ -17,6 +18,7 @@
         ri.shop_address,
         ri.content,
         ri.create_date,
+        ri.status,
         vi.vehicle_number,
         vi.name,
         vi.principal,
@@ -36,6 +38,9 @@
         </if>
         <if test="repairInfo.principal != null and repairInfo.principal != ''">
             AND vi.principal LIKE CONCAT('%',#{repairInfo.principal},'%')
+        </if>
+        <if test="repairInfo.repairStatus != null and repairInfo.repairStatus != ''">
+            AND vi.principal = #{repairInfo.repairStatus}
         </if>
         order by
         ri.create_date desc

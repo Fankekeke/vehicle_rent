@@ -62,6 +62,30 @@ public class VehicleInfoController {
     }
 
     /**
+     * 车辆维修信息详情
+     *
+     * @param id 维修信息ID
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    @GetMapping("/repair/detail/{id}")
+    public R selectVehicleRepairDetail(@PathVariable("id") Integer id) throws FebsException {
+        return R.ok(vehicleInfoService.selectVehicleRepairDetail(id));
+    }
+
+    /**
+     * 缴费信息详情
+     *
+     * @param id 缴费信息ID
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    @GetMapping("/payment/record/detail/{id}")
+    public R selectPaymentRecordDetail(@PathVariable("id") Integer id) throws FebsException {
+        return R.ok(vehicleInfoService.selectPaymentRecordDetail(id));
+    }
+
+    /**
      * 添加订单信息
      *
      * @param orderInfo 车辆订单信息

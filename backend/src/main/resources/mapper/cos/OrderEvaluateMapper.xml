@@ -13,6 +13,7 @@
         oe.images,
         oe.create_date,
         oi.code as orderCode,
+        oi.total,
         oi.order_name,
         ui.name as userName,
         vi.vehicle_number,
