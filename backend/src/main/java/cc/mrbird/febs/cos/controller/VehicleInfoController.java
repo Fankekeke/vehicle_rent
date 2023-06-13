@@ -86,11 +86,36 @@ public class VehicleInfoController {
     }
 
     /**
+     * 订单评价信息详情
+     *
+     * @param id 评价信息ID
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    @GetMapping("/evaluate/detail/{id}")
+    public R selectEvaluateDetail(@PathVariable("id") Integer id) throws FebsException {
+        return R.ok(vehicleInfoService.selectEvaluateDetail(id));
+    }
+
+    /**
+     * 订单信息详情
+     *
+     * @param id 订单信息ID
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    @GetMapping("/order/detail/{id}")
+    public R selectOrderDetail(@PathVariable("id") Integer id) throws FebsException {
+        return R.ok(vehicleInfoService.selectOrderDetail(id));
+    }
+
+    /**
      * 添加订单信息
      *
      * @param orderInfo 车辆订单信息
      * @return 结果
      */
+    @PostMapping("/order/add")
     public R vehicleOrderAdd(OrderInfo orderInfo) throws FebsException {
         return R.ok(vehicleInfoService.vehicleOrderAdd(orderInfo));
     }

@@ -1,56 +1,36 @@
 <template>
-  <a-modal v-model="show" title="订单详情" @cancel="onClose" :width="900">
+  <a-modal v-model="show" title="评价详情" @cancel="onClose" :width="1200">
     <template slot="footer">
       <a-button key="back" @click="onClose" type="danger">
         关闭
       </a-button>
     </template>
-    <div style="font-size: 13px;font-family: SimHei" v-if="orderInfo !== null">
+    <div style="font-size: 13px;font-family: SimHei" v-if="evaluateInfo !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">订单信息</span></a-col>
-        <a-col :span="6"><b>订单编号：</b>
-          {{ orderInfo.code }}
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">评价信息</span></a-col>
+        <a-col :span="6"><b>评价得分：</b>
+          {{ evaluateInfo.score }}
         </a-col>
-        <a-col :span="6"><b>订单名称：</b>
-          {{ orderInfo.orderName ? orderInfo.orderName : '- -' }}
-        </a-col>
-        <a-col :span="6"><b>车辆每日租金：</b>
-          {{ orderInfo.dayPrice ? orderInfo.dayPrice : '- -' }} 元
-        </a-col>
-        <a-col :span="6"><b>总价格：</b>
-          {{ orderInfo.total }} 元
+        <a-col :span="18"><b>评价备注：</b>
+          {{ evaluateInfo.remark ? evaluateInfo.remark : '- -' }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="6"><b>租车天数：</b>
-          {{ orderInfo.days }}
-        </a-col>
-        <a-col :span="6"><b>开始租车时间：</b>
-          {{ orderInfo.startDate ? orderInfo.startDate : '- -' }}
-        </a-col>
-        <a-col :span="6"><b>归还车辆时间</b>
-          {{ orderInfo.endDate ? orderInfo.endDate : '- -' }}
-        </a-col>
-        <a-col :span="6"><b>下单时间：</b>
-          {{ orderInfo.createDate }}
-        </a-col>
-      </a-row>
-      <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="6"><b>订单状态：</b>
-          <span v-if="orderInfo.status == -1">未支付</span>
-          <span v-if="orderInfo.status == 0">未完成</span>
-          <span v-if="orderInfo.status == 1">已完成</span>
-        </a-col>
-        <a-col :span="6"><b>取车店铺：</b>
-          {{ orderInfo.takeShop ? orderInfo.takeShop : '- -' }}
-        </a-col>
-        <a-col :span="6"><b>归还车辆店铺：</b>
-          {{ orderInfo.returnShop ? orderInfo.returnShop : '- -' }}
-        </a-col>
-        <a-col :span="6"><b>备注：</b>
-          {{ orderInfo.remark }}
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">图册</span></a-col>
+        <a-col :span="24">
+          <a-upload
+            name="avatar"
+            action="http://127.0.0.1:9527/file/fileUpload/"
+            list-type="picture-card"
+            :file-list="fileList"
+            @preview="handlePreview"
+            @change="picHandleChange"
+          >
+          </a-upload>
+          <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+            <img alt="example" style="width: 100%" :src="previewImage" />
+          </a-modal>
         </a-col>
       </a-row>
     </div>
@@ -124,29 +104,12 @@
         </a-col>
       </a-row>
       <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">图册</span></a-col>
-        <a-col :span="24">
-          <a-upload
-            name="avatar"
-            action="http://127.0.0.1:9527/file/fileUpload/"
-            list-type="picture-card"
-            :file-list="fileList"
-            @preview="handlePreview"
-            @change="picHandleChange"
-          >
-          </a-upload>
-          <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-            <img alt="example" style="width: 100%" :src="previewImage" />
-          </a-modal>
-        </a-col>
-      </a-row>
-      <br/>
     </div>
   </a-modal>
 </template>
 
 <script>
+import baiduMap from '@/utils/map/baiduMap'
 import moment from 'moment'
 moment.locale('zh-cn')
 function getBase64 (file) {
@@ -158,20 +121,20 @@ function getBase64 (file) {
   })
 }
 export default {
-  name: 'orderView',
+  name: 'ShopView',
   props: {
-    orderShow: {
+    evaluateShow: {
       type: Boolean,
       default: false
     },
-    orderData: {
+    evaluateData: {
       type: Object
     }
   },
   computed: {
     show: {
       get: function () {
-        return this.orderShow
+        return this.evaluateShow
       },
       set: function () {
       }
@@ -187,28 +150,38 @@ export default {
       reserveInfo: null,
       durgList: [],
       logisticsList: [],
-      current: 0,
       userInfo: null,
+      vehicleInfo: null,
       orderInfo: null,
-      vehicleInfo: null
+      evaluateInfo: null
     }
   },
   watch: {
-    orderShow: function (value) {
+    evaluateShow: function (value) {
       if (value) {
-        this.dataInit(this.orderData.id)
-        
+        this.dataInit(this.evaluateData.id)
       }
     }
   },
   methods: {
-    dataInit (orderId) {
-      this.$get(`/cos/vehicle-info/order/detail/${orderId}`).then((r) => {
+    dataInit (id) {
+      this.$get(`/cos/vehicle-info/evaluate/detail/${id}`).then((r) => {
         this.userInfo = r.data.user
         this.orderInfo = r.data.order
         this.vehicleInfo = r.data.vehicle
-        this.imagesInit(this.orderData.images)
+        this.evaluateInfo = r.data.evaluate
+        this.imagesInit(this.evaluateInfo.images)
       })
+    },
+    local (evaluateData) {
+      baiduMap.clearOverlays()
+      baiduMap.rMap().enableScrollWheelZoom(true)
+      // eslint-disable-next-line no-undef
+      let point = new BMap.Point(evaluateData.longitude, evaluateData.latitude)
+      baiduMap.pointAdd(point)
+      baiduMap.findPoint(point, 16)
+      // let driving = new BMap.DrivingRoute(baiduMap.rMap(), {renderOptions:{map: baiduMap.rMap(), autoViewport: true}});
+      // driving.search(new BMap.Point(this.nowPoint.lng,this.nowPoint.lat), new BMap.Point(scenic.point.split(",")[0],scenic.point.split(",")[1]));
     },
     imagesInit (images) {
       if (images !== null && images !== '') {

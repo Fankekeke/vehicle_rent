@@ -124,7 +124,27 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
      */
     @Override
     public LinkedHashMap<String, Object> selectOrderDetail(Integer id) throws FebsException {
-        return null;
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
+            {
+                put("order", null);
+                put("vehicle", null);
+                put("user", null);
+            }
+        };
+        // 订单信息
+        OrderInfo order = orderInfoService.getById(id);
+        if (order == null) {
+            throw new FebsException("订单信息不存在！");
+        }
+        result.put("order", order);
+        // 车辆信息
+        VehicleInfo vehicle = this.getOne(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, order.getVehicleNo()));
+        result.put("vehicle", vehicle);
+        // 用户信息
+        UserInfo userInfo = userInfoService.getById(order.getUserId());
+        result.put("user", userInfo);
+        return result;
     }
 
     /**
@@ -194,6 +214,42 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         // 车店信息
         ShopInfo shopInfo = shopInfoService.getById(vehicleInfo.getShopId());
         result.put("shop", shopInfo);
+        return result;
+    }
+
+    /**
+     * 订单评价信息详情
+     *
+     * @param id 评价信息ID
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    @Override
+    public LinkedHashMap<String, Object> selectEvaluateDetail(Integer id) throws FebsException {
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
+            {
+                put("vehicle", null);
+                put("order", null);
+                put("user", null);
+                put("evaluate", null);
+            }
+        };
+        // 评价信息
+        OrderEvaluate evaluate = orderEvaluateService.getById(id);
+        if (evaluate == null) {
+            throw new FebsException("评价信息不存在！");
+        }
+        result.put("evaluate", evaluate);
+        // 订单信息
+        OrderInfo order = orderInfoService.getById(evaluate.getOrderId());
+        result.put("order", order);
+        // 车辆信息
+        VehicleInfo vehicle = this.getOne(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, order.getVehicleNo()));
+        result.put("vehicle", vehicle);
+        // 用户信息
+        UserInfo user = userInfoService.getById(order.getUserId());
+        result.put("user", user);
         return result;
     }
 

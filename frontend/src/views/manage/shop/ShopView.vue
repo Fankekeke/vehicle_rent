@@ -51,7 +51,7 @@
       </a-row>
       <br/>
        <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 5px"><span style="font-size: 15px;font-weight: 650;color: #000c17">药店位置</span></a-col>
+        <a-col style="margin-bottom: 5px"><span style="font-size: 15px;font-weight: 650;color: #000c17">车店位置</span></a-col>
       </a-row>
       <div>
         <a-card :bordered="false" style="height: 400px">
