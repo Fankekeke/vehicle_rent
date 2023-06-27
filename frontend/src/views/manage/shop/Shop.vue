@@ -65,6 +65,7 @@
                @change="handleTableChange">
         <template slot="operation" slot-scope="text, record">
           <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
+          <a-icon type="file-search" @click="shopViewOpen(record)" title="修 改" style="margin-left: 15px"></a-icon>
         </template>
       </a-table>
     </div>
@@ -143,8 +144,8 @@ export default {
         title: '车店名称',
         dataIndex: 'name'
       }, {
-        title: '创建时间',
-        dataIndex: 'createDate',
+        title: '车店地址',
+        dataIndex: 'shopAddress',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -198,6 +199,16 @@ export default {
           }
         }
       }, {
+        title: '创建时间',
+        dataIndex: 'createDate',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
         title: '操作',
         dataIndex: 'operation',
         scopedSlots: {customRender: 'operation'}
@@ -228,6 +239,13 @@ export default {
     edit (record) {
       this.$refs.shopEdit.setFormValues(record)
       this.shopEdit.visiable = true
+    },
+    shopViewOpen (row) {
+      this.shopView.data = row
+      this.shopView.visiable = true
+    },
+    handleshopViewClose () {
+      this.shopView.visiable = false
     },
     handleshopEditClose () {
       this.shopEdit.visiable = false

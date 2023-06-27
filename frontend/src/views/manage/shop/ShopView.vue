@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="车店详情" @cancel="onClose" :width="900">
+  <a-modal v-model="show" title="车店详情" @cancel="onClose" :width="1000">
     <template slot="footer">
       <a-button key="back" @click="onClose" type="danger">
         关闭
@@ -54,8 +54,8 @@
         <a-col style="margin-bottom: 5px"><span style="font-size: 15px;font-weight: 650;color: #000c17">车店位置</span></a-col>
       </a-row>
       <div>
-        <a-card :bordered="false" style="height: 400px">
-          <div id="areas" style="width: 100%;height: 350px;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);background:#ec9e3c;color:#fff"></div>
+        <a-card :bordered="false" style="height: 500px">
+          <div id="areas" style="width: 100%;height: 450px;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);background:#ec9e3c;color:#fff"></div>
         </a-card>
       </div>
     </div>
