@@ -74,6 +74,7 @@
         </template>
         <template slot="operation" slot-scope="text, record">
           <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改" style="margin-left: 15px"></a-icon>
+          <a-icon type="file-search" @click="handlevehicleViewOpen(record)" title="详 情" style="margin-left: 15px"></a-icon>
         </template>
       </a-table>
     </div>
@@ -108,7 +109,7 @@ moment.locale('zh-cn')
 
 export default {
   name: 'vehicle',
-  components: {vehicleAdd, vehicleEdit, vehicleView, RangeDateVehicleView},
+  components: {vehicleAdd, vehicleEdit, vehicleView, RangeDate},
   data () {
     return {
       advanced: false,
@@ -169,13 +170,13 @@ export default {
         dataIndex: 'status',
         customRender: (text, row, index) => {
           switch (text) {
-            case 0:
+            case '0':
               return <a-tag>空闲</a-tag>
-            case 1:
+            case '1':
               return <a-tag>使用中</a-tag>
-            case 2:
+            case '2':
               return <a-tag>维修中</a-tag>
-            case 3:
+            case '3':
               return <a-tag>已报废</a-tag>
             default:
               return '- -'
@@ -198,13 +199,13 @@ export default {
         dataIndex: 'fuelType',
         customRender: (text, row, index) => {
           switch (text) {
-            case 0:
+            case '1':
               return <a-tag>燃油</a-tag>
-            case 1:
+            case '2':
               return <a-tag>柴油</a-tag>
-            case 2:
+            case '3':
               return <a-tag>油电混动</a-tag>
-            case 3:
+            case '4':
               return <a-tag>电能</a-tag>
             default:
               return '- -'

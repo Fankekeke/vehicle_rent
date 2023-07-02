@@ -179,7 +179,7 @@ export default {
       let fields = ['name', 'status', 'sex', 'deptId']
       let obj = {}
       Object.keys(staff).forEach((key) => {
-        if (key === 'sex' || key === 'status' || 'deptId') {
+        if (key === 'sex' || key === 'status') {
           staff[key] = staff[key].toString()
         }
         if (key === 'images') {

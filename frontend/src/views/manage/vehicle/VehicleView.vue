@@ -40,7 +40,7 @@
         </a-col>
       </a-row>
       <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">  
+      <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="6"><b>联系电话：</b>
           {{ vehicleInfo.phone }}
         </a-col>
@@ -98,7 +98,7 @@
         </a-col>
       </a-row>
       <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">  
+      <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="6"><b>负责人：</b>
           {{ shopInfo.principal }}
         </a-col>
@@ -132,10 +132,10 @@
         </a-col>
         <a-col :span="6"><b>车座数：</b>
           {{ typeInfo.seats ? brandInfo.seats : '- -' }}
-        </a-col>  
+        </a-col>
       </a-row>
       <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">  
+      <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="6"><b>适合行李数：</b>
           {{ shopInfo.luggage }}
         </a-col>
@@ -166,7 +166,7 @@ export default {
       type: Boolean,
       default: false
     },
-    vehicleData: {
+    vehicleInfo: {
       type: Object
     }
   },
@@ -199,11 +199,11 @@ export default {
   watch: {
     vehicleShow: function (value) {
       if (value) {
-        this.imagesInit(this.vehicleData.images)
+        this.imagesInit(this.vehicleInfo.images)
         setTimeout(() => {
           baiduMap.initMap('areas')
           setTimeout(() => {
-            this.local(this.vehicleData)
+            this.local(this.vehicleInfo)
           }, 500)
         }, 200)
       }

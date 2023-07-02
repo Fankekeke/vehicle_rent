@@ -32,7 +32,6 @@
         LEFT JOIN shop_info si ON (si.id = vi.shop_id)
         LEFT JOIN brand_info bi ON (bi.id = vi.brand)
         LEFT JOIN vehicle_type_info vti ON (vti.id = vi.use_type)
-        LEFT JOIN
         where
         1 = 1
         <if test="vehicleInfo.vehicleNumber != null and vehicleInfo.vehicleNumber != ''">

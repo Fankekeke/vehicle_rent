@@ -288,7 +288,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/vehicleType-info/page', {
+      this.$get('/cos/vehicle-type-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

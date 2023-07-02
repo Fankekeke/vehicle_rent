@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="新增车辆" @cancel="onClose" :width="1000">
+  <a-modal v-model="show" title="新增车辆" @cancel="onClose" :width="1200">
     <template slot="footer">
       <a-button key="back" @click="onClose">
         取消
@@ -50,7 +50,7 @@
         </a-col>
         <a-col :span="6">
           <a-form-item label='载客数量' v-bind="formItemLayout">
-            <a-input-number v-decorator="[
+            <a-input-number style="width: 100%" v-decorator="[
             'carryPassengers'
             ]" :min="1" :step="1"/>
           </a-form-item>
@@ -216,7 +216,7 @@ export default {
   },
   methods: {
     selectShopList () {
-      this.$get(`/cos/shop-info/list`).then((r) => {
+      this.$get(`/cos/shop-info/datalist`).then((r) => {
         this.shopList = r.data.data
       })
     },
