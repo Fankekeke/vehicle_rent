@@ -72,12 +72,34 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         if (StrUtil.isEmpty(vehicleInfo.getVehicleNo())) {
             throw new FebsException("车辆编号不能为空！");
         }
-        int count = this.count(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, vehicleInfo.getVehicleNo()));
+        int count = this.count(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, vehicleInfo.getVehicleNo()).or().eq(VehicleInfo::getVehicleNumber, vehicleInfo.getVehicleNumber()));
         if (count > 0) {
-            throw new FebsException("车辆编号重复！");
+            throw new FebsException("车辆编号或车牌号码重复！");
         }
         return this.save(vehicleInfo);
     }
+
+    /**
+     * 车辆信息修改
+     *
+     * @param vehicleInfo 车辆信息
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    @Override
+    public boolean vehicleEdit(VehicleInfo vehicleInfo) throws FebsException {
+        // 校验车牌号或者车辆编号是否重复
+        List<VehicleInfo> vehicleNoCheck = this.list(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, vehicleInfo.getVehicleNo()));
+        List<VehicleInfo> vehicleNumberCheck = this.list(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNumber, vehicleInfo.getVehicleNumber()));
+        if (vehicleNoCheck.size() > 1 || (vehicleNoCheck.size() == 1 && !vehicleNoCheck.get(0).getId().equals(vehicleInfo.getId()))) {
+            throw new FebsException("车辆编号不能重复！");
+        }
+        if (vehicleNumberCheck.size() > 1 || (vehicleNumberCheck.size() == 1 && !vehicleNumberCheck.get(0).getId().equals(vehicleInfo.getId()))) {
+            throw new FebsException("车牌号码不能重复！");
+        }
+        return this.updateById(vehicleInfo);
+    }
+
 
     /**
      * 缴费信息详情
@@ -389,6 +411,12 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
             throw new FebsException("开始结束时间不能小于当前日期");
         }
 
+        // 是否存在待维修的数据
+        int repairCheck = repairInfoService.count(Wrappers.<RepairInfo>lambdaQuery().eq(RepairInfo::getVehicleNo, repairInfo.getVehicleNo()).eq(RepairInfo::getRepairStatus, 0));
+        if (repairCheck > 0) {
+            throw new FebsException("此车辆已经添加过维修");
+        }
+
         // 设置维修开始结束格式
         repairInfo.setRepairStart(DateUtil.formatDateTime(DateUtil.parseDate(repairInfo.getRepairStart() + " 00:00:01")));
         repairInfo.setRepairEnd(DateUtil.formatDateTime(DateUtil.parseDate(repairInfo.getRepairEnd() + " 23:59:59")));
@@ -417,6 +445,54 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         }
         repairInfo.setRepairStatus("0");
         return repairInfoService.save(repairInfo);
+    }
+
+    /**
+     * 修改维修信息
+     *
+     * @param repairInfo 维修信息
+     * @return 结果
+     */
+    @Override
+    public boolean vehicleRepairEdit(RepairInfo repairInfo) throws FebsException {
+        if (StrUtil.isEmpty(repairInfo.getVehicleNo()) || StrUtil.isEmpty(repairInfo.getRepairStart()) || StrUtil.isEmpty(repairInfo.getRepairEnd())) {
+            throw new FebsException("参数不能为空！");
+        }
+
+        // 校验车辆信息
+        VehicleInfo vehicle = this.getOne(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, repairInfo.getVehicleNo()));
+        if (vehicle == null) {
+            throw new FebsException("车辆信息不存在！！");
+        }
+
+        // 维修时间校验【开始结束时间不能小于当前日期】
+        boolean repairDateCheck = (DateUtil.compare(new DateTime(), DateUtil.parseDate(repairInfo.getRepairStart())) == -1 && DateUtil.compare(new DateTime(), DateUtil.parseDate(repairInfo.getRepairEnd())) == -1);
+        if (!repairDateCheck) {
+            throw new FebsException("开始结束时间不能小于当前日期");
+        }
+
+        // 维修车辆是否使用中
+        List<OrderInfo> orderList = orderInfoService.list(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getVehicleNo, repairInfo.getVehicleNo())
+                .eq(OrderInfo::getStatus, "0"));
+        if (CollectionUtil.isNotEmpty(orderList)) {
+            for (OrderInfo order : orderList) {
+                boolean overStartCheck = (DateUtil.compare(DateUtil.parseDate(repairInfo.getRepairStart()), DateUtil.parseDate(order.getStartDate())) == -1
+                        && DateUtil.compare(DateUtil.parseDate(repairInfo.getRepairStart()), DateUtil.parseDate(order.getEndDate())) == -1);
+                boolean overEndCheck = (DateUtil.compare(DateUtil.parseDate(repairInfo.getRepairStart()), DateUtil.parseDate(order.getStartDate())) == -1
+                        && DateUtil.compare(DateUtil.parseDate(repairInfo.getRepairStart()), DateUtil.parseDate(order.getEndDate())) == -1);
+                if (!overStartCheck || !overEndCheck) {
+                    throw new FebsException("维修日期在车辆使用日期内！");
+                }
+            }
+        }
+        // 维修状态-判断维修计划是否处于当前时间内
+        boolean isIn = DateUtil.isIn(new DateTime(), DateUtil.parseDate(repairInfo.getRepairStart()), DateUtil.parseDate(repairInfo.getRepairEnd()));
+        if (isIn) {
+            vehicle.setStatus("2");
+            this.updateById(vehicle);
+        }
+        repairInfo.setRepairStatus("0");
+        return false;
     }
 
     /**

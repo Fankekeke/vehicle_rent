@@ -48,4 +48,34 @@
         order by
         oi.create_date desc
     </select>
+
+    <!-- 根据时间获取订单信息 -->
+    <select id="selectOrderByDate" resultType="cc.mrbird.febs.cos.entity.OrderInfo">
+        select
+        oi.id,
+        oi.code,
+        oi.order_name,
+        oi.user_id,
+        oi.vehicle_no,
+        oi.day_price,
+        oi.start_date,
+        oi.end_date,
+        oi.take_shop,
+        oi.return_shop,
+        oi.total,
+        oi.create_date,
+        oi.remark,
+        DATE_FORMAT(oi.create_date, '%Y') AS year,
+        DATE_FORMAT(oi.create_date, '%c') AS month
+        from
+        order_info oi
+        where
+        1 = 1
+        <if test="year != null and year != ''">
+            AND DATE_FORMAT(oi.create_date, '%Y') = #{year}
+        </if>
+        <if test="month != null and month != ''">
+            AND DATE_FORMAT(oi.create_date, '%c') = #{month}
+        </if>
+    </select>
 </mapper>

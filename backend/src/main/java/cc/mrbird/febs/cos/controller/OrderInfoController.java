@@ -24,6 +24,17 @@ public class OrderInfoController {
     private final IOrderInfoService orderInfoService;
 
     /**
+     * 主页数据统计
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    @GetMapping("/homeData")
+    public R homeData(@RequestParam Integer userId) {
+        return R.ok();
+    }
+
+    /**
      * 分页获取订单信息
      *
      * @param page      分页对象

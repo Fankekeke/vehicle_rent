@@ -132,6 +132,17 @@ public class VehicleInfoController {
     }
 
     /**
+     * 修改维修信息
+     *
+     * @param repairInfo 维修信息
+     * @return 结果
+     */
+    @PutMapping("/repair/edit")
+    public R vehicleRepairEdit(RepairInfo repairInfo) throws FebsException {
+        return R.ok();
+    }
+
+    /**
      * 获取ID获取车辆详情
      *
      * @param id 主键
@@ -172,8 +183,8 @@ public class VehicleInfoController {
      * @return 结果
      */
     @PutMapping
-    public R edit(VehicleInfo vehicleInfo) {
-        return R.ok(vehicleInfoService.updateById(vehicleInfo));
+    public R edit(VehicleInfo vehicleInfo) throws FebsException {
+        return R.ok(vehicleInfoService.vehicleEdit(vehicleInfo));
     }
 
     /**

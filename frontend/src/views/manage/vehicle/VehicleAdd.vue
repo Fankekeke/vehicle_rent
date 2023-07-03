@@ -81,7 +81,7 @@
         </a-col>
         <a-col :span="6">
           <a-form-item label='出场日期' v-bind="formItemLayout">
-            <a-input v-decorator="[
+            <a-date-picker v-decorator="[
             'factoryDate'
             ]"/>
           </a-form-item>

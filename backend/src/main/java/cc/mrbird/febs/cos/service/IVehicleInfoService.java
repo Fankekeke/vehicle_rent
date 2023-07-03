@@ -31,8 +31,18 @@ public interface IVehicleInfoService extends IService<VehicleInfo> {
      *
      * @param vehicleInfo 车辆信息
      * @return 结果
+     * @throws FebsException 异常
      */
     boolean vehicleAdd(VehicleInfo vehicleInfo) throws FebsException;
+
+    /**
+     * 车辆信息修改
+     *
+     * @param vehicleInfo 车辆信息
+     * @return 结果
+     * @throws FebsException 异常
+     */
+    boolean vehicleEdit(VehicleInfo vehicleInfo) throws FebsException;
 
     /**
      * 缴费信息详情
@@ -110,6 +120,14 @@ public interface IVehicleInfoService extends IService<VehicleInfo> {
      * @return 结果
      */
     boolean vehicleRepairAdd(RepairInfo repairInfo) throws FebsException;
+
+    /**
+     * 修改维修信息
+     *
+     * @param repairInfo 维修信息
+     * @return 结果
+     */
+    boolean vehicleRepairEdit(RepairInfo repairInfo) throws FebsException;
 
     /**
      * 设置车辆在厂状态

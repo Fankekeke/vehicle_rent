@@ -224,7 +224,7 @@ export default {
             values.repairEnd = moment(values.repairEnd).format('YYYY-MM-DD')
           }
           this.loading = true
-          this.$put('/cos/repair-info', {
+          this.$put('/cos/vehicle-info/repair/edit', {
             ...values
           }).then((r) => {
             this.reset()

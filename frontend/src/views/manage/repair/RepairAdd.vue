@@ -44,7 +44,7 @@
         </a-col>
         <a-col :span="6">
           <a-form-item label='维修结束时间' v-bind="formItemLayout">
-            <a-input v-decorator="[
+            <a-date-picker v-decorator="[
             'repairEnd',
             { rules: [{ required: true, message: '请输入维修结束时间!' }] }
             ]"/>
@@ -52,7 +52,7 @@
         </a-col>
         <a-col :span="6">
           <a-form-item label='维修开始时间' v-bind="formItemLayout">
-            <a-input v-decorator="[
+            <a-date-picker v-decorator="[
             'repairStart',
             { rules: [{ required: true, message: '请输入维修开始时间!' }] }
             ]"/>
@@ -178,7 +178,7 @@ export default {
             values.repairEnd = moment(values.repairEnd).format('YYYY-MM-DD')
           }
           this.loading = true
-          this.$post('/cos/repair-info', {
+          this.$post('/cos/vehicle-info/repair/add', {
             ...values
           }).then((r) => {
             this.reset()

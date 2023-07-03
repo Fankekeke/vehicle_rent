@@ -101,4 +101,9 @@ public class OrderInfo implements Serializable {
     @TableField(exist = false)
     private String vehicleNumber;
 
+    @TableField(exist = false)
+    private String year;
+
+    @TableField(exist = false)
+    private String month;
 }
