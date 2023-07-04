@@ -157,4 +157,9 @@
         days ASC
     </select>
 
+    <!-- 维修统计 -->
+    <select id="selectRepairMonth" resultType="java.util.LinkedHashMap">
+
+    </select>
+
 </mapper>

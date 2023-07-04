@@ -47,4 +47,13 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
      * @return 结果
      */
     List<LinkedHashMap<String, Object>> selectOrderNumByDay(@Param("shopCode") String shopCode);
+
+    /**
+     * 维修统计
+     *
+     * @param year  年份
+     * @param month 月份
+     * @return 结果
+     */
+    List<LinkedHashMap<String, Object>> selectRepairMonth(@Param("year") String year, @Param("month") String month);
 }
