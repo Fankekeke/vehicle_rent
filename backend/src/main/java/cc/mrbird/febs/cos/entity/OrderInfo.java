@@ -95,6 +95,11 @@ public class OrderInfo implements Serializable {
      */
     private String status;
 
+    /**
+     * 车店编号
+     */
+    private String shopCode;
+
     @TableField(exist = false)
     private String vehicleName;
 
