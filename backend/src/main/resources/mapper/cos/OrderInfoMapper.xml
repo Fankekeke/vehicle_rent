@@ -159,7 +159,72 @@
 
     <!-- 维修统计 -->
     <select id="selectRepairMonth" resultType="java.util.LinkedHashMap">
-
+        select
+        tempDay.date,
+        count(ri.id) as repairCount
+        from
+        (
+        select
+        date
+        from
+        (
+        select
+        DATE_FORMAT(DATE_SUB(last_day(curdate()), interval xc-1 day), '%Y-%m-%d') as date
+        from
+        (
+        select
+        @xi := @xi + 1 as xc
+        from
+        (
+        select
+        1
+        union
+        select
+        2
+        union
+        select
+        3
+        union
+        select
+        4
+        union
+        select
+        5
+        union
+        select
+        6) xc1,
+        (
+        select
+        1
+        union
+        select
+        2
+        union
+        select
+        3
+        union
+        select
+        4
+        union
+        select
+        5
+        union
+        select
+        6) xc2,
+        (
+        select
+        @xi := 0) xc0
+        ) xcxc) x0
+        where
+        x0.date >= (
+        select
+        date_add(curdate(), interval-day(curdate())+ 1 day))) as tempDay
+        left join repair_info ri on
+        (tempDay.date between ri.repair_start and ri.repair_end)
+        where
+        1 = 1
+        group by
+        tempDay.date asc
     </select>
 
 </mapper>

@@ -95,7 +95,8 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         List<LinkedHashMap<String, Object>> orderNumDayList = baseMapper.selectOrderNumByDay(null);
         result.put("orderNumDayList", orderNumDayList);
         // 本月维修统计
-
+        List<LinkedHashMap<String, Object>> repairRate = baseMapper.selectRepairMonth(year, month);
+        result.put("repairRate", repairRate);
 
         List<VehicleInfo> vehicleList = vehicleMapper.selectList(Wrappers.<VehicleInfo>lambdaQuery().ne(VehicleInfo::getStatus, "3"));
 
