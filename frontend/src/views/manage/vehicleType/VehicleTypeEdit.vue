@@ -19,15 +19,15 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='车门数' style="width: 100%" v-bind="formItemLayout">
-            <a-input-number v-decorator="[
+          <a-form-item label='车门数' v-bind="formItemLayout">
+            <a-input-number style="width: 100%" v-decorator="[
             'doors'
             ]" :min="1" :max="10" :step="1"/>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='座位数' style="width: 100%" v-bind="formItemLayout">
-            <a-input-number v-decorator="[
+          <a-form-item label='座位数' v-bind="formItemLayout">
+            <a-input-number style="width: 100%" v-decorator="[
             'seats'
             ]" :min="1" :max="99" :step="1"/>
           </a-form-item>

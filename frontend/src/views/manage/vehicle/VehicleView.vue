@@ -56,6 +56,8 @@
           <span v-if="vehicleInfo.fuelType == 3" style="color: green">油电混动</span>
           <span v-if="vehicleInfo.fuelType == 4" style="color: green">电能</span>
         </a-col>
+        <br/>
+        <br/>
         <a-col :span="24"><b>备注：</b>
           {{ vehicleInfo.content }}
         </a-col>
@@ -107,6 +109,7 @@
         </a-col>
       </a-row>
     </div>
+    <br/>
     <div style="font-size: 13px;font-family: SimHei" v-if="brandInfo !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">车辆品牌</span></a-col>
@@ -118,6 +121,7 @@
         </a-col>
       </a-row>
     </div>
+    <br/>
     <div style="font-size: 13px;font-family: SimHei" v-if="typeInfo !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">车辆类型</span></a-col>
@@ -125,22 +129,22 @@
           {{ typeInfo.code }}
         </a-col>
         <a-col :span="6"><b>车辆类型名称：</b>
-          {{ typeInfo.name ? brandInfo.name : '- -' }}
+          {{ typeInfo.name ? typeInfo.name : '- -' }}
         </a-col>
         <a-col :span="6"><b>车门数：</b>
-          {{ typeInfo.doors ? brandInfo.doors : '- -' }}
+          {{ typeInfo.doors ? typeInfo.doors : '- -' }}
         </a-col>
         <a-col :span="6"><b>车座数：</b>
-          {{ typeInfo.seats ? brandInfo.seats : '- -' }}
+          {{ typeInfo.seats ? typeInfo.seats : '- -' }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="6"><b>适合行李数：</b>
-          {{ shopInfo.luggage }}
+          {{ typeInfo.luggage }}
         </a-col>
         <a-col :span="6"><b>出行类别：</b>
-          {{ shopInfo.travelCategory }}
+          {{ typeInfo.travelCategory }}
         </a-col>
       </a-row>
     </div>
@@ -166,7 +170,7 @@ export default {
       type: Boolean,
       default: false
     },
-    vehicleInfo: {
+    vehicleData: {
       type: Object
     }
   },
@@ -199,7 +203,8 @@ export default {
   watch: {
     vehicleShow: function (value) {
       if (value) {
-        this.imagesInit(this.vehicleInfo.images)
+        this.imagesInit(this.vehicleData.images)
+        this.dataInit(this.vehicleData.vehicleNo)
         setTimeout(() => {
           baiduMap.initMap('areas')
           setTimeout(() => {
