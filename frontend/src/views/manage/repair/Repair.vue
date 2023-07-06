@@ -109,7 +109,7 @@ moment.locale('zh-cn')
 
 export default {
   name: 'repair',
-  components: {repairAdd, repairEdit, repairView, RangeDaterepairView},
+  components: {repairAdd, repairEdit, repairView, RangeDate},
   data () {
     return {
       advanced: false,
@@ -169,7 +169,14 @@ export default {
         dataIndex: 'principal'
       }, {
         title: '维修价格',
-        dataIndex: 'price'
+        dataIndex: 'price',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text + '元'
+          } else {
+            return '- -'
+          }
+        }
       }, {
         title: '维修原因',
         dataIndex: 'reason',
@@ -182,12 +189,12 @@ export default {
         }
       }, {
         title: '维修状态',
-        dataIndex: 'status',
+        dataIndex: 'repairStatus',
         customRender: (text, row, index) => {
           switch (text) {
-            case 0:
+            case '0':
               return <a-tag>未完成</a-tag>
-            case 1:
+            case '1':
               return <a-tag>已完成</a-tag>
             default:
               return '- -'

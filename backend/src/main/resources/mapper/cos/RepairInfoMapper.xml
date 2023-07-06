@@ -18,7 +18,7 @@
         ri.shop_address,
         ri.content,
         ri.create_date,
-        ri.status,
+        ri.repair_status,
         vi.vehicle_number,
         vi.name,
         vi.principal,

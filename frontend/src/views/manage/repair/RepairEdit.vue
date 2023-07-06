@@ -12,7 +12,7 @@
       <a-row :gutter="20">
          <a-col :span="6">
           <a-form-item label='选择维修车辆' v-bind="formItemLayout">
-            <a-select v-decorator="[
+            <a-select disabled v-decorator="[
               'vehicleNo',
               { rules: [{ required: true, message: '请选择维修车辆!' }] }
               ]">
@@ -22,7 +22,7 @@
         </a-col>
         <a-col :span="6">
           <a-form-item label='维修金额' v-bind="formItemLayout">
-            <a-input-number v-decorator="[
+            <a-input-number style="width: 100%" v-decorator="[
             'price'
             ]" :min="1" :step="1"/>
           </a-form-item>
@@ -43,18 +43,18 @@
           </a-form-item>
         </a-col>
         <a-col :span="6">
-          <a-form-item label='维修结束时间' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'repairEnd',
-            { rules: [{ required: true, message: '请输入维修结束时间!' }] }
+          <a-form-item label='维修开始时间' v-bind="formItemLayout">
+            <a-date-picker style="width: 100%" v-decorator="[
+            'repairStart',
+            { rules: [{ required: true, message: '请输入维修开始时间!' }] }
             ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="6">
-          <a-form-item label='维修开始时间' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'repairStart',
-            { rules: [{ required: true, message: '请输入维修开始时间!' }] }
+          <a-form-item label='维修结束时间' v-bind="formItemLayout">
+            <a-date-picker style="width: 100%" v-decorator="[
+            'repairEnd',
+            { rules: [{ required: true, message: '请输入维修结束时间!' }] }
             ]"/>
           </a-form-item>
         </a-col>
@@ -187,6 +187,11 @@ export default {
         if (key === 'images') {
           this.fileList = []
           this.imagesInit(repair['images'])
+        }
+        if (key === 'repairStart' || key === 'repairEnd') {
+          if (repair[key] != null) {
+            repair[key] = moment(repair[key])
+          }
         }
         if (fields.indexOf(key) !== -1) {
           this.form.getFieldDecorator(key)

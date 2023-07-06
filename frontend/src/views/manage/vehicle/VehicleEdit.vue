@@ -276,6 +276,9 @@ export default {
         if (key === 'status' || key === 'deptId') {
           vehicle[key] = vehicle[key].toString()
         }
+        if (key === 'factoryDate' && vehicle[key] != null) {
+          vehicle[key] = moment(vehicle[key])
+        }
         if (key === 'images') {
           this.fileList = []
           this.imagesInit(vehicle['images'])

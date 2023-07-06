@@ -417,6 +417,8 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
             throw new FebsException("此车辆已经添加过维修");
         }
 
+        repairInfo.setCode("REP-" + System.currentTimeMillis());
+
         // 设置维修开始结束格式
         repairInfo.setRepairStart(DateUtil.formatDateTime(DateUtil.parseDate(repairInfo.getRepairStart() + " 00:00:01")));
         repairInfo.setRepairEnd(DateUtil.formatDateTime(DateUtil.parseDate(repairInfo.getRepairEnd() + " 23:59:59")));
