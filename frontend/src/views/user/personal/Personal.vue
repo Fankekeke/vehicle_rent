@@ -1,29 +1,71 @@
 <template>
   <a-row :gutter="20">
-    <a-col :span="16">
+    <a-col :span="6">
       <a-card :loading="loading" :bordered="false">
         <a-form :form="form" layout="vertical">
           <a-row :gutter="20">
             <a-col :span="12">
-              <a-form-item label='用户姓名' v-bind="formItemLayout">
+              <a-form-item label='用户编号' v-bind="formItemLayout">
+                <a-input disabled v-decorator="[
+                'code',
+                ]"/>
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label='注册时间' v-bind="formItemLayout">
+                <a-input disabled v-decorator="[
+                'createDate',
+                ]"/>
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label='用户名称' v-bind="formItemLayout">
                 <a-input v-decorator="[
-            'name',
-            { rules: [{ required: true, message: '请输入用户姓名!' }] }
-            ]"/>
+                'name',
+                { rules: [{ required: true, message: '请输入用户名称!' }] }
+                ]"/>
               </a-form-item>
             </a-col>
             <a-col :span="12">
               <a-form-item label='邮箱地址' v-bind="formItemLayout">
                 <a-input v-decorator="[
-            'mail'
-            ]"/>
+                'mail'
+                ]"/>
               </a-form-item>
             </a-col>
-            <a-col :span="8">
+            <a-col :span="12">
               <a-form-item label='联系方式' v-bind="formItemLayout">
                 <a-input v-decorator="[
-            'phone'
-            ]"/>
+                'phone'
+                ]"/>
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label='省份' v-bind="formItemLayout">
+                <a-input v-decorator="[
+                'province'
+                ]"/>
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label='市' v-bind="formItemLayout">
+                <a-input v-decorator="[
+                'city'
+                ]"/>
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label='区' v-bind="formItemLayout">
+                <a-input v-decorator="[
+                'area'
+                ]"/>
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label='联系地址' v-bind="formItemLayout">
+                <a-input v-decorator="[
+                'address'
+                ]"/>
               </a-form-item>
             </a-col>
             <a-col :span="24">
@@ -55,13 +97,28 @@
         </a-button>
       </a-card>
     </a-col>
-    <a-col :span="8"></a-col>
+    <a-col :span="18">
+      <div style="background:#ECECEC; padding:30px;margin-top: 30px">
+        <a-card :bordered="false">
+          <a-spin :spinning="dataLoading">
+            <a-calendar>
+              <ul slot="dateCellRender" slot-scope="value" class="events">
+                <li v-for="item in getListData(value)" :key="item.content">
+                  <a-badge :status="item.type" :text="item.content" />
+                </li>
+              </ul>
+            </a-calendar>
+          </a-spin>
+        </a-card>
+      </div>
+    </a-col>
   </a-row>
 </template>
 
 <script>
 import {mapState} from 'vuex'
-
+import moment from 'moment'
+moment.locale('zh-cn')
 function getBase64 (file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -86,6 +143,8 @@ export default {
       form: this.$form.createForm(this),
       formItemLayout,
       loading: false,
+      courseInfo: [],
+      dataLoading: false,
       fileList: [],
       previewVisible: false,
       previewImage: '',
@@ -96,11 +155,31 @@ export default {
     this.getExpertInfo(this.currentUser.userId)
   },
   methods: {
+    isDuringDate (beginDateStr, endDateStr, curDataStr) {
+      let curDate = new Date(curDataStr)
+      let beginDate = new Date(beginDateStr)
+      let endDate = new Date(endDateStr)
+      if (curDate >= beginDate && curDate <= endDate) {
+        return true
+      }
+      return false
+    },
+    getListData (value) {
+      let listData = []
+      this.courseInfo.forEach(item => {
+        if ((moment(value).format('YYYY-MM-DD')) === (moment(item.createDate).format('YYYY-MM-DD'))) {
+          listData.push({type: 'success', content: item.code})
+        }
+      })
+      return listData || []
+    },
     getExpertInfo (userId) {
-      this.$get(`/cos/user-info/detail/${userId}`).then((r) => {
-        this.expertInfo = r.data.data
-        console.log(this.expertInfo)
+      this.dataLoading = true
+      this.$get(`/cos/user-info/user/${userId}`).then((r) => {
+        this.expertInfo = r.data.user
         this.setFormValues(this.expertInfo)
+        this.courseInfo = r.data.order
+        this.dataLoading = false
       })
     },
     handleCancel () {
@@ -127,7 +206,7 @@ export default {
     },
     setFormValues ({...expert}) {
       this.rowId = expert.id
-      let fields = ['name', 'phone', 'sex', 'mail', 'images']
+      let fields = ['code', 'name', 'phone', 'province', 'city', 'area', 'mail', 'images', 'address', 'createDate']
       let obj = {}
       Object.keys(expert).forEach((key) => {
         if (key === 'images') {
