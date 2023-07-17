@@ -26,12 +26,11 @@ public class OrderInfoController {
     /**
      * 主页数据统计
      *
-     * @param userId 用户ID
      * @return 结果
      */
     @GetMapping("/homeData")
-    public R homeData(@RequestParam Integer userId) {
-        return R.ok();
+    public R homeData() {
+        return R.ok(orderInfoService.homeData());
     }
 
     /**

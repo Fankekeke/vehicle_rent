@@ -25,8 +25,7 @@ public interface IOrderInfoService extends IService<OrderInfo> {
     /**
      * 主页数据统计
      *
-     * @param userId 用户ID
      * @return 结果
      */
-    LinkedHashMap<String, Object> homeData(Integer userId);
+    LinkedHashMap<String, Object> homeData();
 }

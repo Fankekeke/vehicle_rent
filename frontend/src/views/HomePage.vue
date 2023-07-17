@@ -142,11 +142,6 @@ export default {
         this.getNewList()
       })
     },
-    getNewList () {
-      this.$get(`/cos/notify-info/detail/${this.user.userId}`).then((r) => {
-        this.bulletinList = r.data.data
-      })
-    },
     welcome () {
       const date = new Date()
       const hour = date.getHours()
@@ -158,7 +153,6 @@ export default {
     }
   },
   mounted () {
-    this.getNewList()
     this.welcomeMessage = this.welcome()
     this.$get(`index/${this.user.username}`).then((r) => {
       let data = r.data.data

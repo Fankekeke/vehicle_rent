@@ -29,13 +29,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo> implements IOrderInfoService {
 
-    private IBulletinInfoService bulletinInfoService;
+    private final IBulletinInfoService bulletinInfoService;
 
-    private VehicleInfoMapper vehicleMapper;
+    private final VehicleInfoMapper vehicleMapper;
 
-    private VehicleTypeInfoMapper vehicleTypeMapper;
+    private final VehicleTypeInfoMapper vehicleTypeMapper;
 
-    private BrandInfoMapper brandMapper;
+    private final BrandInfoMapper brandMapper;
 
     /**
      * 分页获取订单信息
@@ -52,11 +52,10 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     /**
      * 主页数据统计
      *
-     * @param userId 用户ID
      * @return 结果
      */
     @Override
-    public LinkedHashMap<String, Object> homeData(Integer userId) {
+    public LinkedHashMap<String, Object> homeData() {
         // 返回数据
         LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
             {
