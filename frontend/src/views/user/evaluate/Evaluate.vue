@@ -7,10 +7,34 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="订单编号"
+                label="订单名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.orderCode"/>
+                <a-input v-model="queryParams.orderName"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="客户名称"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.userName"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="车牌号码"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.vehicleNumber"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="车辆名称"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.vehicleName"/>
               </a-form-item>
             </a-col>
           </div>
@@ -39,9 +63,9 @@
           <template>
             <a-tooltip>
               <template slot="title">
-                {{ record.content }}
+                {{ record.remark }}
               </template>
-              {{ record.content.slice(0, 10) }} ...
+              {{ record.remark.slice(0, 10) }} ...
             </a-tooltip>
           </template>
         </template>
@@ -96,7 +120,7 @@ export default {
         dataIndex: 'orderCode'
       }, {
         title: '订单价格',
-        dataIndex: 'amount',
+        dataIndex: 'total',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text + '元'
@@ -108,26 +132,8 @@ export default {
         title: '评价客户',
         dataIndex: 'userName'
       }, {
-        title: '头像',
-        dataIndex: 'userImages',
-        customRender: (text, record, index) => {
-          if (!record.userImages) return <a-avatar shape="square" icon="user" />
-          return <a-popover>
-            <template slot="content">
-              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
-            </template>
-            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
-          </a-popover>
-        }
-      }, {
-        title: '初始地址',
-        dataIndex: 'startAddress'
-      }, {
-        title: '运输地址',
-        dataIndex: 'endAddress'
-      }, {
-        title: '综合得分',
-        dataIndex: 'overScore',
+        title: '评价得分',
+        dataIndex: 'score',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text + '分'
@@ -136,8 +142,38 @@ export default {
           }
         }
       }, {
+        title: '订单名称',
+        dataIndex: 'orderName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '车牌号码',
+        dataIndex: 'vehicleNumber',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '车辆名称',
+        dataIndex: 'vehicleName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
         title: '评价内容',
-        dataIndex: 'content',
+        dataIndex: 'remark',
         scopedSlots: { customRender: 'contentShow' }
       }, {
         title: '评价图片',
@@ -282,8 +318,11 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      params.userId = this.currentUser.userId
-      this.$get('/cos/evaluate-info/page', {
+      if (params.type === undefined) {
+        delete params.type
+      }
+      params.userId = this.currentUser.usesrId
+      this.$get('/cos/order-evaluate/page', {
         ...params
       }).then((r) => {
         let data = r.data.data
