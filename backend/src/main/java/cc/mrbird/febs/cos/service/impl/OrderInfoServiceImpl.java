@@ -1,10 +1,7 @@
 package cc.mrbird.febs.cos.service.impl;
 
-import cc.mrbird.febs.cos.dao.BrandInfoMapper;
-import cc.mrbird.febs.cos.dao.VehicleInfoMapper;
-import cc.mrbird.febs.cos.dao.VehicleTypeInfoMapper;
+import cc.mrbird.febs.cos.dao.*;
 import cc.mrbird.febs.cos.entity.*;
-import cc.mrbird.febs.cos.dao.OrderInfoMapper;
 import cc.mrbird.febs.cos.service.IBulletinInfoService;
 import cc.mrbird.febs.cos.service.IOrderInfoService;
 import cn.hutool.core.collection.CollectionUtil;
@@ -37,6 +34,10 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     private final BrandInfoMapper brandMapper;
 
+    private RepairInfoMapper repairInfoMapper;
+
+    private ShopInfoMapper shopInfoMapper;
+
     /**
      * 分页获取订单信息
      *
@@ -63,8 +64,34 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 put("monthOrderTotal", 0);
                 put("yearOrderNum", 0);
                 put("yearOrderTotal", 0);
+                put("vehicleNum", 0);
+                put("repairNum", 0);
+                put("totalPrice", 0);
+                put("totalNum", 0);
+                put("shopNum", 0);
             }
         };
+
+        // 车辆数量
+        int vehicleNum = vehicleMapper.selectCount(Wrappers.lambdaQuery());
+        result.put("vehicleNum", vehicleNum);
+
+        // 维修次数
+        int repairNum = repairInfoMapper.selectCount(Wrappers.lambdaQuery());
+        result.put("repairNum", repairNum);
+
+        // 总订单金额
+        List<OrderInfo> orderAllList = this.list(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getStatus, "1"));
+        BigDecimal totalPrice = orderAllList.stream().map(OrderInfo::getTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+        result.put("totalPrice", totalPrice);
+
+        // 总订单数量
+        int totalNum = orderAllList.size();
+        result.put("totalNum", totalNum);
+
+        // 车店数量
+        int shopNum = shopInfoMapper.selectCount(Wrappers.lambdaQuery());
+        result.put("shopNum", shopNum);
 
         // 获取当前月份及当前月份
         String year = StrUtil.toString(DateUtil.year(new Date()));
@@ -99,7 +126,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
         List<VehicleInfo> vehicleList = vehicleMapper.selectList(Wrappers.<VehicleInfo>lambdaQuery().ne(VehicleInfo::getStatus, "3"));
 
-        List<VehicleTypeInfo> typeList = vehicleTypeMapper.selectList(Wrappers.<VehicleTypeInfo>lambdaQuery());
+        List<VehicleTypeInfo> typeList = vehicleTypeMapper.selectList(Wrappers.lambdaQuery());
         Map<Integer, String> typeMap = typeList.stream().collect(Collectors.toMap(VehicleTypeInfo::getId, VehicleTypeInfo::getName));
         // 车辆类型统计
         Map<String, Object> vehicleTypeRate = new HashMap<>(16);
@@ -110,7 +137,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         });
         result.put("vehicleTypeRate", vehicleTypeRate);
 
-        List<BrandInfo> brandList = brandMapper.selectList(Wrappers.<BrandInfo>lambdaQuery());
+        List<BrandInfo> brandList = brandMapper.selectList(Wrappers.lambdaQuery());
         Map<Integer, String> brandMap = brandList.stream().collect(Collectors.toMap(BrandInfo::getId, BrandInfo::getName));
         // 车辆品牌统计
         Map<String, Object> vehicleBrandRate = new HashMap<>(16);

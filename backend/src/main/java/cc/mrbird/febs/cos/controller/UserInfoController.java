@@ -3,6 +3,7 @@ package cc.mrbird.febs.cos.controller;
 
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.UserInfo;
+import cc.mrbird.febs.cos.service.IOrderInfoService;
 import cc.mrbird.febs.cos.service.IUserInfoService;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -26,7 +27,7 @@ public class UserInfoController {
     /**
      * 分页获取用户信息
      *
-     * @param page      分页对象
+     * @param page     分页对象
      * @param userInfo 用户信息
      * @return 结果
      */
@@ -44,6 +45,17 @@ public class UserInfoController {
     @GetMapping("/{id}")
     public R detail(@PathVariable("id") Integer id) {
         return R.ok(userInfoService.getById(id));
+    }
+
+    /**
+     * 根据用户ID用户信息及订单
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    @GetMapping("/user/{userId}")
+    public R selectUserByUserId(@PathVariable("userId") Integer userId) {
+        return R.ok(userInfoService.selectUserByUserId(userId));
     }
 
     /**
@@ -90,5 +102,5 @@ public class UserInfoController {
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {
         return R.ok(userInfoService.removeByIds(ids));
     }
-    
+
 }

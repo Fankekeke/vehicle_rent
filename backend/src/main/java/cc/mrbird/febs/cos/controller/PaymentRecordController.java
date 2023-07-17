@@ -26,7 +26,7 @@ public class PaymentRecordController {
     /**
      * 分页获取支付记录信息
      *
-     * @param page      分页对象
+     * @param page          分页对象
      * @param paymentRecord 支付记录信息
      * @return 结果
      */
@@ -89,5 +89,5 @@ public class PaymentRecordController {
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {
         return R.ok(paymentRecordService.removeByIds(ids));
     }
-    
+
 }

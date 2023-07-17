@@ -15,6 +15,14 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
+                label="订单名称"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.orderName"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
                 label="客户名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
@@ -101,9 +109,12 @@ export default {
     columns () {
       return [{
         title: '订单编号',
-        dataIndex: 'orderCode'
+        dataIndex: 'code'
       }, {
-        title: '头像',
+        title: '订单名称',
+        dataIndex: 'orderName'
+      }, {
+        title: '车辆图片',
         dataIndex: 'userImages',
         customRender: (text, record, index) => {
           if (!record.userImages) return <a-avatar shape="square" icon="user" />
@@ -113,6 +124,26 @@ export default {
             </template>
             <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
           </a-popover>
+        }
+      }, {
+        title: '车辆名称',
+        dataIndex: 'vehicleName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      },{
+        title: '车牌号',
+        dataIndex: 'vehicleNumber',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
         }
       }, {
         title: '客户名称',
@@ -135,8 +166,8 @@ export default {
           }
         }
       }, {
-        title: '付款金额',
-        dataIndex: 'amount',
+        title: '每日租金',
+        dataIndex: 'dayPrice',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text + '元'
@@ -145,7 +176,17 @@ export default {
           }
         }
       }, {
-        title: '起始地址',
+        title: '付款金额',
+        dataIndex: 'total',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text + '元'
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '开始时间',
         dataIndex: 'startAddress',
         customRender: (text, row, index) => {
           if (text !== null) {
@@ -155,8 +196,8 @@ export default {
           }
         }
       }, {
-        title: '运输地址',
-        dataIndex: 'endAddress',
+        title: '结束时间',
+        dataIndex: 'startDate',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -294,6 +335,9 @@ export default {
         // 如果分页信息为空，则设置为默认值
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
+      }
+      if (params.type === undefined) {
+        delete params.type
       }
       params.userId = this.currentUser.userId
       this.$get('/cos/payment-record/page', {
