@@ -41,6 +41,9 @@
         <if test="orderEvaluate.vehicleName != null and orderEvaluate.vehicleName != ''">
             AND vi.name LIKE CONCAT('%',#{orderEvaluate.vehicleName},'%')
         </if>
+        <if test="orderEvaluate.userId != null and orderEvaluate.userId != ''">
+            AND ui.id = #{orderEvaluate.userId}
+        </if>
         order by
         oe.create_date desc
     </select>
