@@ -46,6 +46,11 @@ public class OrderInfo implements Serializable {
     private Integer userId;
 
     /**
+     * 租车天数
+     */
+    private Integer rentDay;
+
+    /**
      * 车辆编号
      */
     private String vehicleNo;

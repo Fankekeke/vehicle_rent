@@ -166,30 +166,8 @@ export default {
         title: '订单编号',
         dataIndex: 'code'
       }, {
-        title: '客户名称',
-        dataIndex: 'userName',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return <a-tag>平台内下单</a-tag>
-          }
-        }
-      }, {
-        title: '头像',
-        dataIndex: 'userImages',
-        customRender: (text, record, index) => {
-          if (!record.userImages) return <a-avatar shape="square" icon="user" />
-          return <a-popover>
-            <template slot="content">
-              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
-            </template>
-            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
-          </a-popover>
-        }
-      }, {
-        title: '联系方式',
-        dataIndex: 'phone',
+        title: '订单名称',
+        dataIndex: 'orderName',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -198,8 +176,50 @@ export default {
           }
         }
       }, {
-        title: '订单总额',
-        dataIndex: 'amount',
+        title: '下单用户',
+        dataIndex: 'userName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '车辆编号',
+        dataIndex: 'vehicleNo',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '车牌号码',
+        dataIndex: 'vehicleNumber',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '车辆图片',
+        dataIndex: 'images',
+        customRender: (text, record, index) => {
+          if (!record.images) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+          </a-popover>
+        }
+      }, {
+        title: '价格/日',
+        dataIndex: 'dayPrice',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text + '元'
@@ -208,8 +228,18 @@ export default {
           }
         }
       }, {
-        title: '初始地址',
-        dataIndex: 'startAddress',
+        title: '订单总额',
+        dataIndex: 'total',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text + '元'
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '取车时间',
+        dataIndex: 'startDate',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -218,8 +248,8 @@ export default {
           }
         }
       }, {
-        title: '运货地址',
-        dataIndex: 'endAddress',
+        title: '还车时间',
+        dataIndex: 'endDate',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -232,14 +262,12 @@ export default {
         dataIndex: 'status',
         customRender: (text, row, index) => {
           switch (text) {
-            case 0:
-              return <a-tag>待付款</a-tag>
-            case 1:
-              return <a-tag>正在分配</a-tag>
-            case 2:
-              return <a-tag>运输中</a-tag>
-            case 3:
-              return <a-tag>运输完成</a-tag>
+            case '-1':
+              return <a-tag>未支付</a-tag>
+            case '0':
+              return <a-tag>未完成</a-tag>
+            case '1':
+              return <a-tag>已完成</a-tag>
             default:
               return '- -'
           }

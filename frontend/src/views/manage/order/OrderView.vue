@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="订单详情" @cancel="onClose" :width="900">
+  <a-modal v-model="show" title="订单详情" @cancel="onClose" :width="1200">
     <template slot="footer">
       <a-button key="back" @click="onClose" type="danger">
         关闭
@@ -24,7 +24,7 @@
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="6"><b>租车天数：</b>
-          {{ orderInfo.days }}
+          {{ orderInfo.rentDay }} 天
         </a-col>
         <a-col :span="6"><b>开始租车时间：</b>
           {{ orderInfo.startDate ? orderInfo.startDate : '- -' }}
@@ -43,17 +43,22 @@
           <span v-if="orderInfo.status == 0">未完成</span>
           <span v-if="orderInfo.status == 1">已完成</span>
         </a-col>
-        <a-col :span="6"><b>取车店铺：</b>
-          {{ orderInfo.takeShop ? orderInfo.takeShop : '- -' }}
-        </a-col>
-        <a-col :span="6"><b>归还车辆店铺：</b>
-          {{ orderInfo.returnShop ? orderInfo.returnShop : '- -' }}
-        </a-col>
-        <a-col :span="6"><b>备注：</b>
+        <a-col :span="18"><b>备注：</b>
           {{ orderInfo.remark }}
         </a-col>
       </a-row>
+      <br/>
+      <a-row style="padding-left: 24px;padding-right: 24px;">
+        <a-col :span="12"><b>取车店铺：</b>
+          {{ orderInfo.takeShop ? orderInfo.takeShop : '- -' }}
+        </a-col>
+        <a-col :span="12"><b>归还车辆店铺：</b>
+          {{ orderInfo.returnShop ? orderInfo.returnShop : '- -' }}
+        </a-col>
+      </a-row>
     </div>
+    <br/>
+    <br/>
     <div style="font-size: 13px;font-family: SimHei" v-if="userInfo !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">评价用户</span></a-col>
@@ -68,6 +73,8 @@
         </a-col>
       </a-row>
     </div>
+    <br/>
+    <br/>
     <div style="font-size: 13px;font-family: SimHei" v-if="vehicleInfo !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">车辆信息</span></a-col>
@@ -103,7 +110,7 @@
         </a-col>
       </a-row>
       <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">  
+      <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="6"><b>联系电话：</b>
           {{ vehicleInfo.phone }}
         </a-col>
@@ -119,6 +126,8 @@
           <span v-if="vehicleInfo.fuelType == 3" style="color: green">油电混动</span>
           <span v-if="vehicleInfo.fuelType == 4" style="color: green">电能</span>
         </a-col>
+        <br/>
+        <br/>
         <a-col :span="24"><b>备注：</b>
           {{ vehicleInfo.content }}
         </a-col>
@@ -197,7 +206,7 @@ export default {
     orderShow: function (value) {
       if (value) {
         this.dataInit(this.orderData.id)
-        
+
       }
     }
   },
