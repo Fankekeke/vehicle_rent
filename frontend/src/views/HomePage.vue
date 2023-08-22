@@ -16,27 +16,7 @@
             <div class="head-info-time">上次登录时间：{{user.lastLoginTime ? user.lastLoginTime : '第一次访问系统'}}</div>
           </div>
         </a-col>
-        <a-col :span="24" v-if="user.roleId == 75"></a-col>
         <a-col :span="12" v-if="user.roleId == 75">
-          <a-card hoverable :loading="loading" :bordered="false" title="消息通知" style="height: 550px;overflow: auto">
-            <div style="padding: 0 22px">
-              <a-list item-layout="vertical" :pagination="false" :data-source="bulletinList">
-                <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
-                  <template slot="actions">
-                  <span key="message" style="font-size: 13px">
-                    <a-icon type="message" style="margin-right: 8px" />
-                    {{ item.createDate }}
-                  </span>
-                  </template>
-                  <a-list-item-meta :description="item.content" style="font-size: 13px">
-                  </a-list-item-meta>
-                  <a slot="actions">
-                    <span @click="cleanMessage(item.id)">已阅</span>
-                  </a>
-                </a-list-item>
-              </a-list>
-            </div>
-          </a-card>
         </a-col>
         <a-col :span="12">
           <div>
@@ -44,16 +24,16 @@
               <a-col :span="4"></a-col>
               <a-col :span="4"></a-col>
               <a-col :span="4">
-                <head-info title="司机数量" :content="titleData.driverNum" :center="false" :bordered="false"/>
+                <head-info title="车辆数量" :content="titleData.vehicleNum" :center="false" :bordered="false"/>
               </a-col>
               <a-col :span="4">
-                <head-info title="搬运工数量" :content="titleData.staffMoveNum" :center="false" :bordered="false"/>
+                <head-info title="维修数量" :content="titleData.repairNum" :center="false" :bordered="false"/>
               </a-col>
               <a-col :span="4">
-                <head-info title="总订单数" :content="titleData.orderNum" :center="false" :bordered="false"/>
+                <head-info title="总收益" :content="titleData.totalPrice" :center="false" :bordered="false"/>
               </a-col>
               <a-col :span="4">
-                <head-info title="总收益" :content="titleData.amount" :center="false"/>
+                <head-info title="总订单数" :content="titleData.totalNum" :center="false"/>
               </a-col>
             </a-row>
           </div>
@@ -83,10 +63,11 @@ export default {
   data () {
     return {
       titleData: {
-        driverNum: 0,
-        staffMoveNum: 0,
-        orderNum: 0,
-        amount: 0
+        vehicleNum: 0,
+        repairNum: 0,
+        totalPrice: 0,
+        shopNum: 0,
+        totalNum: 0
       },
       series: [],
       chartOptions: {

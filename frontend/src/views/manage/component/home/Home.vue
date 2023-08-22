@@ -270,7 +270,7 @@ export default {
   methods: {
     selectHomeData () {
       this.$get('/cos/order-info/homeData').then((r) => {
-        let titleData = { driverNum: r.data.driverNum, staffMoveNum: r.data.staffMoveNum, orderNum: r.data.orderNum, amount: r.data.amount }
+        let titleData = { vehicleNum: r.data.vehicleNum, repairNum: r.data.repairNum, totalPrice: r.data.totalPrice, totalNum: r.data.totalNum, shopNum: r.data.shopNum }
         this.$emit('setTitle', titleData)
         this.titleData.monthOrderNum = r.data.monthOrderNum
         this.titleData.monthOrderTotal = r.data.monthOrderTotal

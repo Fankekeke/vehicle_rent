@@ -34,9 +34,9 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     private final BrandInfoMapper brandMapper;
 
-    private RepairInfoMapper repairInfoMapper;
+    private final RepairInfoMapper repairInfoMapper;
 
-    private ShopInfoMapper shopInfoMapper;
+    private final ShopInfoMapper shopInfoMapper;
 
     /**
      * 分页获取订单信息
