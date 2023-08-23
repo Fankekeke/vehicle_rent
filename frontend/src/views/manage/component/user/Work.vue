@@ -1,7 +1,7 @@
 <template>
   <div style="background:#ECECEC; padding:30px;margin-top: 30px;margin-bottom: 30px">
     <div style="height: 500px;">
-      <div style="height: 350px;background-image: url(../static/img/living-room-1853203_1920.jpg);padding: 50px">
+      <div style="height: 350px;background-image: url(../static/img/house.jpg);padding: 50px">
         <div style="font-size: 35px;font-weight: 500;color: white;font-family: SimHei">你好 朋友</div>
         <div style="font-size: 22px;font-weight: 500;color: white;font-family: SimHei">让您入住更轻松</div>
         <div style="height: 250px;margin-top: 100px">
@@ -60,22 +60,30 @@
         </div>
       </a-col>
     </a-row>
-    <rent-view :rentShow="rentView.visiable" :rentData="rentView.data" :startDate="startDate" :endDate="endDate" @close="rentView.visiable = false" @success="orderSuccess"></rent-view>
+    <vehicle-view
+      @close="handlevehicleViewClose"
+      :vehicleShow="vehicleView.visiable"
+      :vehicleData="vehicleView.data">
+    </vehicle-view>
   </div>
 </template>
 
 <script>
 
-import RentView from './RentView.vue'
 import {mapState} from 'vuex'
+import VehicleView from '../../vehicle/VehicleView.vue'
 export default {
   name: 'Work',
-  components: {RentView},
+  components: {VehicleView},
   data () {
     return {
       roomList: [],
       roomTypeList: [],
       loading: false,
+      vehicleView: {
+        visiable: false,
+        data: null
+      },
       rentView: {
         visiable: false,
         data: null
@@ -94,6 +102,9 @@ export default {
     this.getRoomType()
   },
   methods: {
+    handlevehicleViewClose () {
+      this.vehicleView.visiable = false
+    },
     orderSuccess () {
       this.rentView.visiable = false
       this.$message.success('添加订单成功')

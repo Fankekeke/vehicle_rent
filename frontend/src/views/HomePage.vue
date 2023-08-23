@@ -16,7 +16,8 @@
             <div class="head-info-time">上次登录时间：{{user.lastLoginTime ? user.lastLoginTime : '第一次访问系统'}}</div>
           </div>
         </a-col>
-        <a-col :span="12" v-if="user.roleId == 75">
+        <a-col :span="24" v-if="user.roleId == 75">
+          <work></work>
         </a-col>
         <a-col :span="12">
           <div>
@@ -55,11 +56,12 @@ import HeadInfo from '@/views/common/HeadInfo'
 import {mapState} from 'vuex'
 import moment from 'moment'
 import Home from './manage/component/home/Home'
+import Work from './manage/component/user/Work.vue'
 moment.locale('zh-cn')
 
 export default {
   name: 'HomePage',
-  components: {Home, HeadInfo},
+  components: {Work, Home, HeadInfo},
   data () {
     return {
       titleData: {
