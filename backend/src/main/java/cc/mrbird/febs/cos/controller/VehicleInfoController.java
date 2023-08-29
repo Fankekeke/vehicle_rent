@@ -39,6 +39,18 @@ public class VehicleInfoController {
     }
 
     /**
+     * 查询可预定车辆
+     *
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @return 结果
+     */
+    @GetMapping("/order/check")
+    public R selectVehicleByDate(@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
+        return R.ok(vehicleInfoService.selectVehicleByDate(startDate, endDate));
+    }
+
+    /**
      * 根据车辆编号获取日历看板
      *
      * @param vehicleNo 车辆编号

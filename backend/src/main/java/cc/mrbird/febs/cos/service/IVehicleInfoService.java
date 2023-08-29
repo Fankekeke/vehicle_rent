@@ -27,6 +27,15 @@ public interface IVehicleInfoService extends IService<VehicleInfo> {
     IPage<LinkedHashMap<String, Object>> selectVehiclePage(Page<VehicleInfo> page, VehicleInfo vehicleInfo);
 
     /**
+     * 查询可预定车辆
+     *
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @return 结果
+     */
+    List<VehicleInfo> selectVehicleByDate(String startDate, String endDate);
+
+    /**
      * 新增车辆信息
      *
      * @param vehicleInfo 车辆信息

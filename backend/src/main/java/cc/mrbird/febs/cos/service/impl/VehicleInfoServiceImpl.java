@@ -61,6 +61,57 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
     }
 
     /**
+     * 查询可预定车辆
+     *
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @return 结果
+     */
+    @Override
+    public List<VehicleInfo> selectVehicleByDate(String startDate, String endDate) {
+        // 获取所有车辆信息
+        List<VehicleInfo> vehicleInfoList = this.list(Wrappers.<VehicleInfo>lambdaQuery().ne(VehicleInfo::getStatus, "3"));
+        if (CollectionUtil.isEmpty(vehicleInfoList)) {
+            return vehicleInfoList;
+        }
+        List<String> vehicleNos = vehicleInfoList.stream().map(VehicleInfo::getVehicleNo).filter(StrUtil::isNotEmpty).collect(Collectors.toList());
+
+        // 车辆订单记录
+        List<OrderInfo> orderInfoList = orderInfoService.list(Wrappers.<OrderInfo>lambdaQuery().in(OrderInfo::getVehicleNo, vehicleNos));
+        Map<String, List<OrderInfo>> orderMap = orderInfoList.stream().collect(Collectors.groupingBy(OrderInfo::getVehicleNo));
+
+        // 车辆维修记录
+        List<RepairInfo> repairInfoList = repairInfoService.list(Wrappers.<RepairInfo>lambdaQuery().in(RepairInfo::getVehicleNo, vehicleInfoList));
+        Map<String, List<RepairInfo>> repairMap = repairInfoList.stream().collect(Collectors.groupingBy(RepairInfo::getVehicleNo));
+
+        for (VehicleInfo vehicle : vehicleInfoList) {
+            // 校验此时间内是否正在存在订单
+            List<OrderInfo> orderTemp = orderMap.get(vehicle.getVehicleNo());
+            if (CollectionUtil.isNotEmpty(orderTemp)) {
+                for (OrderInfo orderItem : orderTemp) {
+                    boolean startIsIn = DateUtil.isIn(DateUtil.parseDate(startDate), DateUtil.parseDate(orderItem.getStartDate()), DateUtil.parseDate(orderItem.getEndDate()));
+                    boolean endIsIn = DateUtil.isIn(DateUtil.parseDate(endDate), DateUtil.parseDate(orderItem.getStartDate()), DateUtil.parseDate(orderItem.getEndDate()));
+                    if (startIsIn || endIsIn) {
+                        vehicle.setStatus("1");
+                    }
+                }
+            }
+            // 校验此时间车辆是否正在维修
+            List<RepairInfo> repairTemp = repairMap.get(vehicle.getVehicleNo());
+            if (CollectionUtil.isNotEmpty(repairTemp)) {
+                for (RepairInfo repairItem : repairTemp) {
+                    boolean startIsIn = DateUtil.isIn(DateUtil.parseDate(startDate), DateUtil.parseDate(repairItem.getRepairStart()), DateUtil.parseDate(repairItem.getRepairEnd()));
+                    boolean endIsIn = DateUtil.isIn(DateUtil.parseDate(endDate), DateUtil.parseDate(repairItem.getRepairStart()), DateUtil.parseDate(repairItem.getRepairEnd()));
+                    if (startIsIn || endIsIn) {
+                        vehicle.setStatus("2");
+                    }
+                }
+            }
+        }
+        return vehicleInfoList;
+    }
+
+    /**
      * 新增车辆信息
      *
      * @param vehicleInfo 车辆信息
