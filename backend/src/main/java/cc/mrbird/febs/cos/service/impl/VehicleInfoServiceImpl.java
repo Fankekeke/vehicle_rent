@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -435,6 +436,10 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         orderInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         orderInfo.setStatus("0");
         orderInfo.setCode("OR-" + System.currentTimeMillis());
+        // 设置租车天数
+        orderInfo.setRentDay(DateUtil.compare(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(orderInfo.getEndDate())));
+        // 设置总价格
+        orderInfo.setTotal(vehicleInfo.getDayPrice().multiply(new BigDecimal(orderInfo.getRentDay())));
 
         // 添加缴费记录
         PaymentRecord paymentRecord = new PaymentRecord();

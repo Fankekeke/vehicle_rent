@@ -24,6 +24,7 @@
         vi.content,
         vi.create_date,
         vi.shop_id,
+        vi.day_price,
         si.name as shopName,
         bi.name as brandName,
         vti.name as typeName

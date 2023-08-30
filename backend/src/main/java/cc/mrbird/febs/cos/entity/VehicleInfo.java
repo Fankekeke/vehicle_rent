@@ -1,5 +1,6 @@
 package cc.mrbird.febs.cos.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -117,4 +118,9 @@ public class VehicleInfo implements Serializable {
      * 所属车店
      */
     private Integer shopId;
+
+    /**
+     * 每日租金
+     */
+    private BigDecimal dayPrice;
 }
