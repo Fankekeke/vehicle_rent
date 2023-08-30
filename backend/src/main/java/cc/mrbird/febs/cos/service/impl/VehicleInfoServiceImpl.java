@@ -435,6 +435,16 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         orderInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         orderInfo.setStatus("0");
         orderInfo.setCode("OR-" + System.currentTimeMillis());
+
+        // 添加缴费记录
+        PaymentRecord paymentRecord = new PaymentRecord();
+        paymentRecord.setOrderCode(orderInfo.getCode());
+        paymentRecord.setOrderId(orderInfo.getId());
+        paymentRecord.setTotalPrice(orderInfo.getTotal());
+        paymentRecord.setPayTime(DateUtil.formatTime(new Date()));
+        paymentRecord.setCreateDate(DateUtil.formatTime(new Date()));
+        paymentRecord.setPayStatus("1");
+        paymentRecordService.save(paymentRecord);
         return orderInfoService.save(orderInfo);
     }
 
