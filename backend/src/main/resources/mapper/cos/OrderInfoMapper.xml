@@ -48,7 +48,7 @@
             AND vi.vehicle_number LIKE CONCAT('%',#{orderInfo.vehicleNumber},'%')
         </if>
         <if test="orderInfo.userId != null and orderInfo.userId != ''">
-            AND ui.id = #{orderInfo.userId}
+            AND ui.user_id = #{orderInfo.userId}
         </if>
         order by
         oi.create_date desc
