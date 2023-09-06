@@ -126,6 +126,14 @@
             </a-select>
           </a-form-item>
         </a-col>
+        <a-col :span="6">
+          <a-form-item label='每日租金/元' v-bind="formItemLayout">
+            <a-input-number style="width: 100%" v-decorator="[
+            'dayPrice',
+            { rules: [{ required: true, message: '请输入每日租金!' }] }
+            ]" :min="1" :step="1"/>
+          </a-form-item>
+        </a-col>
         <a-col :span="24">
           <a-form-item label='照片' v-bind="formItemLayout">
             <a-upload
