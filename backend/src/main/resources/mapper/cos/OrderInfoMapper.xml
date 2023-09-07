@@ -23,13 +23,15 @@
         ui.name as userName,
         vi.vehicle_number,
         vi.name as vehicleName,
-        vi.images
+        vi.images,
+        oe.id as evaluateId
         from
         order_info oi
         left join user_info ui on
         (ui.id = oi.user_id)
         left join vehicle_info vi on
         (vi.vehicle_no = oi.vehicle_no)
+        left join order_evaluate oe on (oe.order_id = oi .id)
         where
         1 = 1
         <if test="orderInfo.code != null and orderInfo.code != ''">

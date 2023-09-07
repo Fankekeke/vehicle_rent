@@ -206,7 +206,6 @@ export default {
     orderShow: function (value) {
       if (value) {
         this.dataInit(this.orderData.id)
-
       }
     }
   },

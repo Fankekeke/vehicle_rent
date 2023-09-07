@@ -11,18 +11,18 @@
     <div style="width: 100%">
       <a-icon type="arrow-left" style="position: absolute;z-index: 999;color: red;font-size: 20px;margin: 15px" @click="home"/>
       <a-row style="height:100vh;font-family: SimHei">
-        <a-col :span="18" style="height: 100%;">
+        <a-col :span="17" style="height: 100%;">
           <div id="areas" style="width: 100%;height: 100%;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);background:#ec9e3c;color:#fff"></div>
         </a-col>
-        <a-col :span="6" style="height: 100%;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);color:#fff">
+        <a-col :span="7" style="height: 100%;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);color:#fff">
           <div>
             <div class="scenicInfo" style="height: 100vh; overflow-y: auto;padding-left: 5px;overflow-x: hidden">
-              <a-carousel autoplay style="height: 250px;" v-if="orderData.images !== undefined && orderData.images !== ''">
-                <div style="width: 100%;height: 250px" v-for="(item, index) in orderData.images.split(',')" :key="index">
+              <a-carousel autoplay style="height: 300px;" v-if="orderData.images !== undefined && orderData.images !== ''">
+                <div style="width: 100%;height: 300px" v-for="(item, index) in orderData.images.split(',')" :key="index">
                   <img :src="'http://127.0.0.1:9527/imagesWeb/'+item" style="width: 100%;height: 100%">
                 </div>
               </a-carousel>
-              <a-card :title="orderData.startAddress +' ~ '+ orderData.endAddress" :bordered="false">
+              <a-card :title="orderData.startDate +' ~ '+ orderData.endDate" :bordered="false">
               </a-card>
               <div style="font-size: 12px;font-family: SimHei;color: #404040;margin-top: 15px">
                 <a-row style="padding-left: 24px;padding-right: 24px;">
@@ -32,6 +32,7 @@
                 </a-row>
                 <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;" v-if="userInfo != null">
+                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">客户信息</span></a-col>
                   <a-col :span="8"><b>客户编号：</b>
                     {{ userInfo.code !== null ? userInfo.code : '- -' }}
                   </a-col>
@@ -43,92 +44,121 @@
                   </a-col>
                 </a-row>
                 <br/>
+                <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="8"><b>订单金额：</b>
-                    {{ orderData.amount !== null ? orderData.amount : '- -' }}元
+                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">订单信息</span></a-col>
+                  <a-col :span="8"><b>订单名称：</b>
+                    {{ orderData.orderName ? orderData.orderName : '- -' }}
+                  </a-col>
+                  <a-col :span="8"><b>车辆每日租金：</b>
+                    {{ orderData.dayPrice ? orderData.dayPrice : '- -' }} 元
+                  </a-col>
+                  <a-col :span="8"><b>总价格：</b>
+                    {{ orderData.total }} 元
+                  </a-col>
+                </a-row>
+                <br/>
+                <a-row style="padding-left: 24px;padding-right: 24px;">
+                  <a-col :span="8"><b>租车天数：</b>
+                    {{ orderData.rentDay }} 天
+                  </a-col>
+                  <a-col :span="8"><b>下单时间：</b>
+                    {{ orderData.createDate }}
                   </a-col>
                   <a-col :span="8"><b>订单状态：</b>
-                    <span v-if="orderData.status == 0">未支付</span>
-                    <span v-if="orderData.status == 1">正在分配</span>
-                    <span v-if="orderData.status == 2">运输中</span>
-                    <span v-if="orderData.status == 3">运输完成</span>
+                    <span v-if="orderData.status == -1">未支付</span>
+                    <span v-if="orderData.status == 0">未完成</span>
+                    <span v-if="orderData.status == 1">已完成</span>
                   </a-col>
                 </a-row>
                 <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="8"><b>车辆配置：</b>
-                    <span v-if="orderData.vehicleOptions == null">不需要车辆</span>
-                    <span v-if="orderData.vehicleOptions == 1">大型车</span>
-                    <span v-if="orderData.vehicleOptions == 2">中型车</span>
-                    <span v-if="orderData.vehicleOptions == 3">小型车</span>
+                  <a-col :span="24"><b>取车店铺：</b>
+                    {{ orderData.takeShop ? orderData.takeShop : '- -' }}
                   </a-col>
-                  <a-col :span="8"><b>搬运工：</b>
-                    {{ orderData.staffOptions }} 个
+                  <br/>
+                  <br/>
+                  <a-col :span="24"><b>归还车辆店铺：</b>
+                    {{ orderData.returnShop ? orderData.returnShop : '- -' }}
                   </a-col>
-                  <a-col :span="8"><b>是否有电梯：</b>
-                    <span v-if="orderData.hasElevator == 0" style="color: red">无电梯</span>
-                    <span v-if="orderData.hasElevator == 1" style="color: green">有电梯</span>
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="12"><b>下单时间：</b>
-                    {{ orderData.createDate !== null ? orderData.createDate : '- -' }}
+                  <br/>
+                  <br/>
+                  <a-col :span="24"><b>备注：</b>
+                    {{ orderData.remark ? orderData.remark : '- -' }}
                   </a-col>
                 </a-row>
                 <br/>
+                <br/>
+                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="vehicleInfo != null">
+                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">车辆信息</span></a-col>
+                  <a-col :span="8"><b>车辆编号：</b>
+                    {{ vehicleInfo.vehicleNo }}
+                  </a-col>
+                  <a-col :span="8"><b>车牌号：</b>
+                    {{ vehicleInfo.vehicleNumber ? vehicleInfo.vehicleNumber : '- -' }}
+                  </a-col>
+                  <a-col :span="8"><b>车辆颜色：</b>
+                    {{ vehicleInfo.vehicleColor ? vehicleInfo.vehicleColor : '- -' }}
+                  </a-col>
+                </a-row>
+                <br/>
+                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="vehicleInfo != null">
+                  <a-col :span="8"><b>车辆名称：</b>
+                    {{ vehicleInfo.name }}
+                  </a-col>
+                  <a-col :span="8"><b>载客数量：</b>
+                    {{ vehicleInfo.carryPassengers }}
+                  </a-col>
+                  <a-col :span="8"><b>发动机号码：</b>
+                    {{ vehicleInfo.engineNo }}
+                  </a-col>
+                </a-row>
+                <br/>
+                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="vehicleInfo != null">
+                  <a-col :span="8"><b>车辆状态：</b>
+                    <span v-if="vehicleInfo.status == 0" style="color: red">空闲</span>
+                    <span v-if="vehicleInfo.status == 1" style="color: green">使用中</span>
+                    <span v-if="vehicleInfo.status == 2" style="color: green">维修中</span>
+                    <span v-if="vehicleInfo.status == 3" style="color: green">已报废</span>
+                  </a-col>
+                  <a-col :span="8"><b>负责人：</b>
+                    {{ vehicleInfo.principal }}
+                  </a-col>
+                  <a-col :span="8"><b>联系电话：</b>
+                    {{ vehicleInfo.phone }}
+                  </a-col>
+                </a-row>
+                <br/>
+                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="vehicleInfo != null">
+                  <a-col :span="8"><b>出厂日期：</b>
+                    {{ vehicleInfo.factoryDate }}
+                  </a-col>
+                  <a-col :span="8"><b>排放标准：</b>
+                    {{ vehicleInfo.emissionStandard }}
+                  </a-col>
+                  <a-col :span="8"><b>燃料类型：</b>
+                    <span v-if="vehicleInfo.fuelType == 1" style="color: green">燃油</span>
+                    <span v-if="vehicleInfo.fuelType == 2" style="color: green">柴油</span>
+                    <span v-if="vehicleInfo.fuelType == 3" style="color: green">油电混动</span>
+                    <span v-if="vehicleInfo.fuelType == 4" style="color: green">电能</span>
+                  </a-col>
+                </a-row>
+                <br/>
+                <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">周边设施</span></a-col>
+                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">地图标点</span></a-col>
                   <a-col :span="24">
                     <a-radio-group button-style="solid" style="width: 100%" @change="gisOnChange">
-                      <a-radio-button value="1" style="width: 25%;text-align: center">
-                        交通
+                      <a-radio-button value="1" style="width: 33%;text-align: center">
+                        取车地点
                       </a-radio-button>
-                      <a-radio-button value="2" style="width: 25%;text-align: center">
-                        餐饮
+                      <a-radio-button value="2" style="width: 33%;text-align: center">
+                        还车地点
                       </a-radio-button>
-                      <a-radio-button value="3" style="width: 25%;text-align: center">
-                        教育
-                      </a-radio-button>
-                      <a-radio-button value="4" style="width: 25%;text-align: center">
-                        医疗
+                      <a-radio-button value="3" style="width: 33%;text-align: center">
+                        行车轨迹
                       </a-radio-button>
                     </a-radio-group>
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">起始地址</span></a-col>
-                  {{ orderData.startAddress !== null ? orderData.startAddress : '- -' }}
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">运输地址</span></a-col>
-                  {{ orderData.endAddress !== null ? orderData.endAddress : '- -' }}
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">总距离</span></a-col>
-                  <a-col :span="12">
-                    {{ orderData.distanceLength !== null ? (orderData.distanceLength + '千米') : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="12"><b>起始经度：</b>
-                    {{ orderData.startLongitude !== null ? orderData.startLongitude : '- -' }}
-                  </a-col>
-                  <a-col :span="12"><b>起始纬度：</b>
-                    {{ orderData.startLatitude !== null ? orderData.startLatitude : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="12"><b>运输经度：</b>
-                    {{ orderData.endLongitude !== null ? orderData.endLongitude : '- -' }}
-                  </a-col>
-                  <a-col :span="12"><b>运输纬度：</b>
-                    {{ orderData.endLatitude !== null ? orderData.endLatitude : '- -' }}
                   </a-col>
                 </a-row>
                 <br/>
@@ -141,25 +171,7 @@
                   <apexchart v-if="!checkLoading" type="radar" height="300" :options="chartOptions" :series="series"></apexchart>
                 </a-card>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="staffList.length !== 0">
-                  <a-col><span style="font-size: 14px;font-weight: 650;color: #000c17">员工信息</span></a-col>
-                </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="staffList.length !== 0">
-                  <a-col :span="6" v-for="(item, index) in staffList" :key="index">
-                    <a-avatar shape="square" :size="95" :src="'http://127.0.0.1:9527/imagesWeb/' + item.images.split(',')[0]" icon="user" />
-                    <p>{{ item.name }}【{{ item.type == 1 ? '搬运工' : '驾驶员' }}】</p>
-                  </a-col>
-                </a-row>
-                <br/>
-                <br/>
-                <div style="text-align: center">
-                  <a-icon type="smile" theme="twoTone" style="font-size: 75px"/>
-                  <p style="margin-top: 25px;font-size: 20px;font-family: SimHei" v-if="orderData.status == 0">未支付</p>
-                  <p style="margin-top: 25px;font-size: 20px;font-family: SimHei" v-if="orderData.status == 1">正在分配</p>
-                  <p style="margin-top: 25px;font-size: 20px;font-family: SimHei" v-if="orderData.status == 2">运输中</p>
-                  <p style="margin-top: 25px;font-size: 20px;font-family: SimHei" v-if="orderData.status == 3">运输完成</p>
-                </div>
               </div>
             </div>
           </div>
@@ -186,6 +198,7 @@ export default {
     return {
       staffList: [],
       evaluateInfo: null,
+      vehicleInfo: null,
       userInfo: null,
       communityRent: 0,
       rentShow: false,
@@ -224,7 +237,7 @@ export default {
   watch: {
     'orderShow': function (value) {
       if (value) {
-        this.selectOrderDetail(this.orderData.code)
+        this.dataInit(this.orderData.id)
         setTimeout(() => {
           baiduMap.initMap('areas')
           setTimeout(() => {
@@ -236,6 +249,15 @@ export default {
     }
   },
   methods: {
+    dataInit (orderId) {
+      this.checkLoading = true
+      this.$get(`/cos/vehicle-info/order/detail/${orderId}`).then((r) => {
+        this.userInfo = r.data.user
+        this.orderInfo = r.data.order
+        this.vehicleInfo = r.data.vehicle
+        this.checkLoading = false
+      })
+    },
     navigation (data) {
       baiduMap.clearOverlays()
       baiduMap.rMap().enableScrollWheelZoom(true)
@@ -312,20 +334,6 @@ export default {
       geolocation.getCurrentPosition(r => {
         this.nowPoint = r.point
       }, {enableHighAccuracy: true})
-    },
-    selectOrderDetail (orderCode) {
-      this.checkLoading = true
-      this.evaluateInfo = null
-      this.staffList = []
-      this.$get(`/cos/order-info/detail/${orderCode}`).then((r) => {
-        this.userInfo = r.data.user
-        this.evaluateInfo = r.data.evaluate
-        if (r.data.evaluate != null) {
-          this.checkEvaluate(r.data.evaluate)
-        }
-        this.staffList = r.data.staff
-        this.checkLoading = false
-      })
     }
   }
 }

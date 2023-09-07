@@ -61,7 +61,7 @@
     <br/>
     <div style="font-size: 13px;font-family: SimHei" v-if="userInfo !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">评价用户</span></a-col>
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">租赁用户</span></a-col>
         <a-col :span="6"><b>用户姓名：</b>
           {{ userInfo.name }}
         </a-col>
@@ -206,7 +206,6 @@ export default {
     orderShow: function (value) {
       if (value) {
         this.dataInit(this.orderData.id)
-
       }
     }
   },

@@ -188,6 +188,13 @@ export default {
       type: Object
     }
   },
+  watch: {
+    show: function (value) {
+      if (value) {
+        this.dataInit(this.orderData.id)
+      }
+    }
+  },
   computed: {
     ...mapState({
       currentUser: state => state.account.user
@@ -211,12 +218,11 @@ export default {
     }
   },
   methods: {
-    dataInit (orderCode) {
-      this.$get(`/cos/vehicle-info/order/detail/${orderCode}`).then((r) => {
+    dataInit (orderId) {
+      this.$get(`/cos/vehicle-info/order/detail/${orderId}`).then((r) => {
         this.userInfo = r.data.user
-        this.vehicleInfo = r.data.vehicle
         this.orderInfo = r.data.order
-        this.imagesInit(this.vehicleInfo.images)
+        this.vehicleInfo = r.data.vehicle
       })
     },
     handleCancel () {
