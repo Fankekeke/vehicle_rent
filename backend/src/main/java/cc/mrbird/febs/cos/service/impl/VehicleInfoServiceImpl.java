@@ -204,6 +204,8 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
                 put("order", null);
                 put("vehicle", null);
                 put("user", null);
+                put("getShop", null);
+                put("putShop", null);
             }
         };
         // 订单信息
@@ -211,6 +213,14 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         if (order == null) {
             throw new FebsException("订单信息不存在！");
         }
+
+        // 取车店铺
+        ShopInfo getShop = shopInfoService.getOne(Wrappers.<ShopInfo>lambdaQuery().eq(ShopInfo::getName, order.getTakeShop()).last("limit 1"));
+        result.put("getShop", getShop);
+        // 还车店铺
+        ShopInfo putShop = shopInfoService.getOne(Wrappers.<ShopInfo>lambdaQuery().eq(ShopInfo::getName, order.getReturnShop()).last("limit 1"));
+        result.put("putShop", putShop);
+
         result.put("order", order);
         // 车辆信息
         VehicleInfo vehicle = this.getOne(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, order.getVehicleNo()));

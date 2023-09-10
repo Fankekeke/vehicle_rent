@@ -7,6 +7,7 @@ import cc.mrbird.febs.cos.entity.UserInfo;
 import cc.mrbird.febs.cos.service.IOrderEvaluateService;
 import cc.mrbird.febs.cos.service.IUserInfoService;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,10 @@ public class OrderEvaluateController {
      */
     @GetMapping("/page")
     public R page(Page<OrderEvaluate> page, OrderEvaluate orderEvaluate) {
+        if (orderEvaluate.getUserId() != null) {
+            UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, orderEvaluate.getUserId()));
+            orderEvaluate.setUserId(userInfo.getId());
+        }
         return R.ok(orderEvaluateService.selectOrderEvaluatePage(page, orderEvaluate));
     }
 

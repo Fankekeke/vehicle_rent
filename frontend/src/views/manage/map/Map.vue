@@ -149,14 +149,11 @@
                   <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">地图标点</span></a-col>
                   <a-col :span="24">
                     <a-radio-group button-style="solid" style="width: 100%" @change="gisOnChange">
-                      <a-radio-button value="1" style="width: 33%;text-align: center">
-                        取车地点
+                      <a-radio-button value="1" style="width: 50%;text-align: center">
+                        取车地址
                       </a-radio-button>
-                      <a-radio-button value="2" style="width: 33%;text-align: center">
-                        还车地点
-                      </a-radio-button>
-                      <a-radio-button value="3" style="width: 33%;text-align: center">
-                        行车轨迹
+                      <a-radio-button value="2" style="width: 50%;text-align: center">
+                        还车地址
                       </a-radio-button>
                     </a-radio-group>
                   </a-col>
@@ -216,6 +213,8 @@ export default {
       roadData: [],
       checkLoading: false,
       echartsShow: false,
+      getShop: null,
+      putShop: null,
       series: [{
         name: '得分',
         data: []
@@ -240,9 +239,6 @@ export default {
         this.dataInit(this.orderData.id)
         setTimeout(() => {
           baiduMap.initMap('areas')
-          setTimeout(() => {
-            this.navigation(this.orderData)
-          }, 200)
           this.getLocal()
         }, 200)
       }
@@ -255,6 +251,8 @@ export default {
         this.userInfo = r.data.user
         this.orderInfo = r.data.order
         this.vehicleInfo = r.data.vehicle
+        this.getShop = r.data.getShop
+        this.putShop = r.data.putShop
         this.checkLoading = false
       })
     },
@@ -311,22 +309,20 @@ export default {
       this.$emit('close')
     },
     gisOnChange (e) {
-      let key = ''
+      let data = null
       switch (e.target.value) {
         case '1':
-          key = '公交站'
+          data = this.getShop
           break
         case '2':
-          key = '餐饮'
-          break
-        case '3':
-          key = '教育'
-          break
-        case '4':
-          key = '医疗'
+          data = this.putShop
           break
       }
-      baiduMap.searchNear(this.orderData.startLongitude, this.orderData.endLatitude, key)
+      baiduMap.rMap().enableScrollWheelZoom(true)
+      // eslint-disable-next-line no-undef
+      let driving = new BMap.DrivingRoute(baiduMap.rMap(), {renderOptions: {map: baiduMap.rMap(), autoViewport: true}})
+      // eslint-disable-next-line no-undef
+      driving.search(new BMap.Point(this.nowPoint.lng, this.nowPoint.lat), new BMap.Point(data.longitude, data.latitude))
     },
     getLocal () {
       // eslint-disable-next-line no-undef

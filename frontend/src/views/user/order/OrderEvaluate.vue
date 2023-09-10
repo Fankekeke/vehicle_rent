@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="订单评价" @cancel="onClose" :width="800">
+  <a-modal v-model="show" title="订单评价" @cancel="onClose" :width="1200">
     <template slot="footer">
       <a-button key="back" @click="onClose">
         取消
@@ -119,6 +119,8 @@
         </a-col>
       </a-row>
     </div>
+    <br/>
+    <br/>
     <a-form :form="form" layout="vertical" style="padding-left: 24px;padding-right: 24px;">
       <a-row :gutter="20">
         <a-col :span="6">
@@ -132,7 +134,7 @@
         <a-col :span="24">
           <a-form-item label='评价内容' v-bind="formItemLayout">
             <a-textarea :rows="6" v-decorator="[
-            'content',
+            'remark',
              { rules: [{ required: true, message: '请输入评价内容!' }] }
             ]"/>
           </a-form-item>
@@ -212,6 +214,9 @@ export default {
       formItemLayout,
       form: this.$form.createForm(this),
       loading: false,
+      userInfo: null,
+      orderInfo: null,
+      vehicleInfo: null,
       fileList: [],
       previewVisible: false,
       previewImage: ''
@@ -254,10 +259,11 @@ export default {
       })
       this.form.validateFields((err, values) => {
         values.images = images.length > 0 ? images.join(',') : null
-        values.orderCode = this.orderData.code
+        values.orderId = this.orderData.id
+        values.userId = this.currentUser.userId
         if (!err) {
           this.loading = true
-          this.$post('/cos/order-info/orderEvaluate', {
+          this.$post('/cos/order-evaluate', {
             ...values
           }).then((r) => {
             this.reset()
