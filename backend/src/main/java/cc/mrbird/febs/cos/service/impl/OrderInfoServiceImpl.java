@@ -103,7 +103,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             Map<String, List<OrderInfo>> orderYearMap = orderList.stream().collect(Collectors.groupingBy(OrderInfo::getYear));
 
             List<OrderInfo> currentMonthList = orderMonthMap.get(month);
-            List<OrderInfo> currentYearList = orderYearMap.get(month);
+            List<OrderInfo> currentYearList = orderYearMap.get(year);
             // 本月订单量
             result.put("monthOrderNum", CollectionUtil.isNotEmpty(currentMonthList) ? currentMonthList.size() : 0);
             // 本月收益
