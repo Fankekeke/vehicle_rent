@@ -20,7 +20,7 @@
                   <a-col :span="24"></a-col>
                   <a-col :span="24" style="font-size: 15px;font-family: SimHei">
                     <div style="margin-top: 10px">
-                      <a style="margin-right: 15px" v-for="(item, index) in roomTypeList" :key="index">{{ item.typeName }}</a>
+                      <a style="margin-right: 15px" v-for="(item, index) in roomTypeList" :key="index">{{ item.name }}</a>
                     </div>
                     <a-col :span="24" style="font-size: 15px;font-family: SimHei">
                       <div style="margin-top: 10px">
@@ -48,12 +48,10 @@
           <a-card :bordered="false">
             <div slot="title">
               <div style="font-size: 14px;font-family: SimHei">
-                {{ item.name }} | {{ item.typeName }} | {{ item.floor }} | {{ item.roomSize }}
+                {{ item.vehicleNumber }} | ￥ {{ item.dayPrice }}
               </div>
             </div>
             <template slot="actions" class="ant-card-actions">
-              <a-icon v-if="item.hasHeart" key="heart" type="heart" style="color: red" @click="collectDelete(item.id)"/>
-              <a-icon v-else key="heart" type="heart"  @click="collectAdd(item.code)"/>
               <a-icon key="ellipsis" type="ellipsis" @click="view(item)"/>
             </template>
           </a-card>
@@ -71,7 +69,7 @@
 <script>
 
 import {mapState} from 'vuex'
-import VehicleView from '../../vehicle/VehicleView.vue'
+import VehicleView from './VehicleView.vue'
 export default {
   name: 'Work',
   components: {VehicleView},
@@ -125,25 +123,25 @@ export default {
     },
     view (record) {
       if (this.startDate && this.endDate) {
-        this.rentView.visiable = true
-        this.rentView.data = record
+        this.vehicleView.visiable = true
+        this.vehicleView.data = record
       } else {
-        this.$message.error('请选择入住时间！')
+        this.$message.error('请选择租赁时间！')
       }
     },
     getRoomType () {
-      this.$get(`/cos/room-type/list`).then((r) => {
+      this.$get(`/cos/vehicle-type-info/list`).then((r) => {
         this.roomTypeList = r.data.data
       })
     },
     getWorkStatusList (params) {
       if (params) {
         params.userId = this.currentUser.userId
-        this.$get(`/cos/order-info/reserve/room`, params).then((r) => {
+        this.$get(`/cos/vehicle-info/order/check`, params).then((r) => {
           this.roomList = r.data.data
         })
       } else {
-        this.$get(`/cos/order-info/room/status`, { userId: this.currentUser.userId }).then((r) => {
+        this.$get(`/cos/vehicle-info/order/check`, { userId: this.currentUser.userId }).then((r) => {
           this.roomList = r.data.data
         })
       }

@@ -86,6 +86,9 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         Map<String, List<RepairInfo>> repairMap = repairInfoList.stream().collect(Collectors.groupingBy(RepairInfo::getVehicleNo));
 
         for (VehicleInfo vehicle : vehicleInfoList) {
+            if (StrUtil.isEmpty(endDate) || StrUtil.isEmpty(startDate)) {
+                continue;
+            }
             // 校验此时间内是否正在存在订单
             List<OrderInfo> orderTemp = orderMap.get(vehicle.getVehicleNo());
             if (CollectionUtil.isNotEmpty(orderTemp)) {

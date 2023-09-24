@@ -8,6 +8,7 @@ import cc.mrbird.febs.cos.entity.RepairInfo;
 import cc.mrbird.febs.cos.entity.VehicleInfo;
 import cc.mrbird.febs.cos.service.IVehicleInfoService;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class VehicleInfoController {
      * @return 结果
      */
     @GetMapping("/order/check")
-    public R selectVehicleByDate(@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
+    public R selectVehicleByDate(@RequestParam(value = "startDate", required = false) String startDate, @RequestParam(value = "endDate", required = false) String endDate) {
         return R.ok(vehicleInfoService.selectVehicleByDate(startDate, endDate));
     }
 
