@@ -9,6 +9,17 @@
       </a-button>
     </template>
     <div style="font-size: 13px;font-family: SimHei" v-if="vehicleInfo !== null">
+      <a-row style="padding-left: 24px;padding-right: 24px;font-size: 25px">
+        <a-col :span="12" style="text-align: center">
+          开始时间:<span style="font-size: 20px">{{ startDate }}</span>
+        </a-col>
+        <a-col :span="12" style="text-align: center">
+          结束时间:<span style="font-size: 20px">{{ endDate }}</span>
+        </a-col>
+      </a-row>
+      <br/>
+      <br/>
+      <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">车辆信息</span></a-col>
         <a-col :span="6"><b>车辆编号：</b>

@@ -48,7 +48,7 @@
           <a-card :bordered="false">
             <div slot="title">
               <div style="font-size: 14px;font-family: SimHei">
-                {{ item.vehicleNumber }} | ￥ {{ item.dayPrice }}
+                {{ item.vehicleNumber }} | <span style="color: red">￥{{ item.dayPrice }}/天</span>
               </div>
             </div>
             <template slot="actions" class="ant-card-actions">
@@ -61,6 +61,8 @@
     <vehicle-view
       @close="handlevehicleViewClose"
       :vehicleShow="vehicleView.visiable"
+      :startDate="startDate"
+      :endDate="endDate"
       :vehicleData="vehicleView.data">
     </vehicle-view>
   </div>
