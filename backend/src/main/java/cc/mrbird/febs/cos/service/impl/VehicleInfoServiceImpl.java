@@ -398,6 +398,8 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
      */
     @Override
     public boolean vehicleOrderAdd(OrderInfo orderInfo) throws FebsException {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, orderInfo.getUserId()));
+        orderInfo.setUserId(userInfo.getId());
         // 获取车辆信息
         VehicleInfo vehicleInfo = this.getOne(Wrappers.<VehicleInfo>lambdaQuery().eq(VehicleInfo::getVehicleNo, orderInfo.getVehicleNo()));
         if (vehicleInfo == null) {
@@ -405,6 +407,12 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         }
         if (!"0".equals(vehicleInfo.getStatus())) {
             throw new FebsException("车辆正在使用中！");
+        }
+
+        // 维修时间校验【开始结束时间不能小于当前日期】
+        boolean orderDateCheck = (DateUtil.compare(new DateTime(), DateUtil.parseDate(orderInfo.getStartDate())) == -1 && DateUtil.compare(new DateTime(), DateUtil.parseDate(orderInfo.getEndDate())) == -1);
+        if (!orderDateCheck) {
+            throw new FebsException("开始结束时间不能小于当前日期");
         }
 
         // 设置订单开始租车和结束时间
@@ -418,9 +426,7 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
             for (OrderInfo order : orderList) {
                 boolean overStartCheck = (DateUtil.compare(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(order.getStartDate())) == -1
                         && DateUtil.compare(DateUtil.parseDate(orderInfo.getEndDate()), DateUtil.parseDate(order.getEndDate())) == -1);
-                boolean overEndCheck = (DateUtil.compare(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(order.getStartDate())) == -1
-                        && DateUtil.compare(DateUtil.parseDate(orderInfo.getEndDate()), DateUtil.parseDate(order.getEndDate())) == -1);
-                if (!overStartCheck || !overEndCheck) {
+                if (overStartCheck) {
                     throw new FebsException("所选日期在其他用户使用车辆日期内！");
                 }
             }
@@ -432,9 +438,7 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
             for (RepairInfo repair : repairList) {
                 boolean overStartCheck = (DateUtil.compare(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(repair.getRepairStart())) == -1
                         && DateUtil.compare(DateUtil.parseDate(orderInfo.getEndDate()), DateUtil.parseDate(repair.getRepairEnd())) == -1);
-                boolean overEndCheck = (DateUtil.compare(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(repair.getRepairStart())) == -1
-                        && DateUtil.compare(DateUtil.parseDate(orderInfo.getEndDate()), DateUtil.parseDate(repair.getRepairEnd())) == -1);
-                if (!overStartCheck || !overEndCheck) {
+                if (overStartCheck) {
                     throw new FebsException("所选日期在车辆维修日期内！");
                 }
             }
@@ -450,18 +454,20 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         orderInfo.setStatus("0");
         orderInfo.setCode("OR-" + System.currentTimeMillis());
         // 设置租车天数
-        orderInfo.setRentDay(DateUtil.compare(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(orderInfo.getEndDate())));
+        orderInfo.setRentDay((int) DateUtil.between(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(orderInfo.getEndDate()), DateUnit.DAY));
         // 设置总价格
         orderInfo.setTotal(vehicleInfo.getDayPrice().multiply(new BigDecimal(orderInfo.getRentDay())));
+        orderInfo.setDayPrice(vehicleInfo.getDayPrice());
+        orderInfo.setOrderName(DateUtil.format(new Date(), "yyyy年MM月dd日") + "-" + vehicleInfo.getVehicleNo());
 
         // 添加缴费记录
         PaymentRecord paymentRecord = new PaymentRecord();
         paymentRecord.setOrderCode(orderInfo.getCode());
         paymentRecord.setOrderId(orderInfo.getId());
         paymentRecord.setTotalPrice(orderInfo.getTotal());
-        paymentRecord.setPayTime(DateUtil.formatTime(new Date()));
-        paymentRecord.setCreateDate(DateUtil.formatTime(new Date()));
-        paymentRecord.setPayStatus("1");
+        paymentRecord.setPayTime(DateUtil.formatDateTime(new Date()));
+        paymentRecord.setCreateDate(DateUtil.formatDateTime(new Date()));
+        paymentRecord.setPayStatus("0");
         paymentRecordService.save(paymentRecord);
         return orderInfoService.save(orderInfo);
     }

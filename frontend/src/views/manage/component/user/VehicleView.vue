@@ -218,13 +218,12 @@ export default {
   methods: {
     addOrder () {
       let data = {
-        roomCode: this.rentData.code,
+        vehicleNo: this.vehicleInfo.vehicleNo,
         startDate: this.startDate,
         endDate: this.endDate,
-        rentDay: this.rentData.rentPrice,
         userId: this.user.userId
       }
-      this.$post('/cos/order-info', data).then((r) => {
+      this.$post('/cos/vehicle-info/order/add', data).then((r) => {
         this.$emit('success')
       })
     },

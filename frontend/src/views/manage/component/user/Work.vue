@@ -60,6 +60,7 @@
     </a-row>
     <vehicle-view
       @close="handlevehicleViewClose"
+      @success="handlevehicleViewSuccess"
       :vehicleShow="vehicleView.visiable"
       :startDate="startDate"
       :endDate="endDate"
@@ -104,6 +105,10 @@ export default {
   methods: {
     handlevehicleViewClose () {
       this.vehicleView.visiable = false
+    },
+    handlevehicleViewSuccess () {
+      this.vehicleView.visiable = false
+      this.$message.success('添加订单成功')
     },
     orderSuccess () {
       this.rentView.visiable = false
