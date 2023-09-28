@@ -54,7 +54,7 @@
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="12">
           <a-form-item label='取车店铺' v-bind="formItemLayout">
-            <a-select v-model="taskShop" style="width: 50%">
+            <a-select v-model="takeShop" style="width: 50%">
               <a-select-option :value="item.name" v-for="(item, index) in shopList" :key="index">{{ item.name }}</a-select-option>
             </a-select>
           </a-form-item>
@@ -228,7 +228,7 @@ export default {
       orderInfo: null,
       vehicleInfo: null,
       shopList: [],
-      taskShop: '',
+      takeShop: '',
       returnShop: ''
     }
   },
@@ -273,21 +273,21 @@ export default {
       }
     },
     submit () {
-      if (this.driverCheck.length !== 0) {
-        this.$get(`/cos/order-info/checkOrder`, {
-          'orderCode': this.orderData.code,
-          'driverCode': this.driverCheck,
-          'staffCodeStr': this.staffCheck.join(',')
+      console.log(this.takeShop)
+      console.log(this.returnShop)
+      if (this.takeShop !== '' && this.returnShop !== '') {
+        this.$put(`/cos/order-info`, {
+          'takeShop': this.takeShop,
+          'returnShop': this.returnShop,
+          'id': this.orderInfo.id
         }).then((r) => {
-          this.cleanData()
           this.$emit('success')
         })
       } else {
-        this.$message.warn('请选择司机')
+        this.$message.warn('请选择车店')
       }
     },
     onClose () {
-      this.cleanData()
       this.$emit('close')
     },
     cleanData () {

@@ -467,7 +467,7 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         paymentRecord.setTotalPrice(orderInfo.getTotal());
         paymentRecord.setPayTime(DateUtil.formatDateTime(new Date()));
         paymentRecord.setCreateDate(DateUtil.formatDateTime(new Date()));
-        paymentRecord.setPayStatus("0");
+        paymentRecord.setPayStatus("-1");
         paymentRecordService.save(paymentRecord);
         return orderInfoService.save(orderInfo);
     }
