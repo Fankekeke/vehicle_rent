@@ -5,6 +5,8 @@ import cc.mrbird.febs.common.domain.QueryRequest;
 import cc.mrbird.febs.common.service.CacheService;
 import cc.mrbird.febs.common.utils.SortUtil;
 import cc.mrbird.febs.common.utils.MD5Util;
+import cc.mrbird.febs.cos.entity.UserInfo;
+import cc.mrbird.febs.cos.service.IUserInfoService;
 import cc.mrbird.febs.system.dao.UserMapper;
 import cc.mrbird.febs.system.dao.UserRoleMapper;
 import cc.mrbird.febs.system.domain.User;
@@ -44,8 +46,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserRoleService userRoleService;
     @Autowired
     private UserManager userManager;
-//    @Autowired
-//    private IUserInfoService userInfoService;
+    @Autowired
+    private IUserInfoService userInfoService;
 
 
     @Override
@@ -209,12 +211,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         this.userRoleMapper.insert(ur);
 
         // 添加用户信息
-//        UserInfo userInfo = new UserInfo();
-//        userInfo.setCode("UR-" + System.currentTimeMillis());
-//        userInfo.setName(name);
-//        userInfo.setUserId(Math.toIntExact(user.getUserId()));
-//        userInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
-//        userInfoService.save(userInfo);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setCode("UR-" + System.currentTimeMillis());
+        userInfo.setName(name);
+        userInfo.setUserId(user.getUserId());
+        userInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
+        userInfoService.save(userInfo);
 
         // 创建用户默认的个性化配置
         userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));

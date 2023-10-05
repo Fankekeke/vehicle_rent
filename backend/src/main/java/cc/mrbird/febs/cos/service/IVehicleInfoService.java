@@ -123,6 +123,14 @@ public interface IVehicleInfoService extends IService<VehicleInfo> {
     boolean vehicleOrderAdd(OrderInfo orderInfo) throws FebsException;
 
     /**
+     * 添加缴费记录
+     *
+     * @param orderCode 订单编号
+     * @return 结果
+     */
+    boolean payRecordAddress(String orderCode);
+
+    /**
      * 车辆添加维修
      *
      * @param repairInfo 维修信息

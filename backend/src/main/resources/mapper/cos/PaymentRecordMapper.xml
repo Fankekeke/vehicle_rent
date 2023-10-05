@@ -47,6 +47,9 @@
         <if test="paymentRecord.userName != null and paymentRecord.userName != ''">
             AND ui.name LIKE CONCAT('%',#{paymentRecord.userName},'%')
         </if>
+        <if test="paymentRecord.userId != null and paymentRecord.userId != ''">
+            AND ui.user_id = #{paymentRecord.userId}
+        </if>
         order by
         pr.create_date desc
     </select>

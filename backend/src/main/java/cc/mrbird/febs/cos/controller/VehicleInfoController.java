@@ -111,6 +111,17 @@ public class VehicleInfoController {
     }
 
     /**
+     * 添加缴费记录
+     *
+     * @param orderCode 订单编号
+     * @return 结果
+     */
+    @GetMapping("/payRecord/add/{orderCode}")
+    public R payRecordAddress(@PathVariable("orderCode") String orderCode) {
+        return R.ok(vehicleInfoService.payRecordAddress(orderCode));
+    }
+
+    /**
      * 订单信息详情
      *
      * @param id 订单信息ID

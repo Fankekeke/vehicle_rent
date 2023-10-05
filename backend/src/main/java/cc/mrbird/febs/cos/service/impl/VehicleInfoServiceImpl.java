@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -47,6 +49,10 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
     private final IVehicleTypeInfoService vehicleTypeInfoService;
 
     private final IBrandInfoService brandInfoService;
+
+    private final IMailService mailService;
+
+    private final TemplateEngine templateEngine;
 
 
     /**
@@ -451,7 +457,7 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
             this.updateById(vehicleInfo);
         }
         orderInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
-        orderInfo.setStatus("0");
+        orderInfo.setStatus("-1");
         orderInfo.setCode("OR-" + System.currentTimeMillis());
         // 设置租车天数
         orderInfo.setRentDay((int) DateUtil.between(DateUtil.parseDate(orderInfo.getStartDate()), DateUtil.parseDate(orderInfo.getEndDate()), DateUnit.DAY));
@@ -460,6 +466,28 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         orderInfo.setDayPrice(vehicleInfo.getDayPrice());
         orderInfo.setOrderName(DateUtil.format(new Date(), "yyyy年MM月dd日") + "-" + vehicleInfo.getVehicleNo());
 
+        // 发送邮件
+        if (StrUtil.isNotEmpty(userInfo.getMail())) {
+            Context context = new Context();
+            context.setVariable("today", DateUtil.formatDate(new Date()));
+            context.setVariable("custom", userInfo.getName() + "，您好。您的订单已生成，请注意查看");
+            String emailContent = templateEngine.process("registerEmail", context);
+            mailService.sendHtmlMail(userInfo.getMail(), DateUtil.formatDate(new Date()) + "车辆预订提示", emailContent);
+        }
+
+        return orderInfoService.save(orderInfo);
+    }
+
+    /**
+     * 添加缴费记录
+     *
+     * @param orderCode 订单编号
+     * @return 结果
+     */
+    @Override
+    public boolean payRecordAddress(String orderCode) {
+        // 获取订单信息
+        OrderInfo orderInfo = orderInfoService.getOne(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getCode, orderCode));
         // 添加缴费记录
         PaymentRecord paymentRecord = new PaymentRecord();
         paymentRecord.setOrderCode(orderInfo.getCode());
@@ -467,9 +495,11 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         paymentRecord.setTotalPrice(orderInfo.getTotal());
         paymentRecord.setPayTime(DateUtil.formatDateTime(new Date()));
         paymentRecord.setCreateDate(DateUtil.formatDateTime(new Date()));
-        paymentRecord.setPayStatus("-1");
-        paymentRecordService.save(paymentRecord);
-        return orderInfoService.save(orderInfo);
+        paymentRecord.setPayStatus("1");
+        // 更新订单状态
+        orderInfo.setStatus("1");
+        orderInfoService.updateById(orderInfo);
+        return paymentRecordService.save(paymentRecord);
     }
 
     /**
