@@ -3,7 +3,7 @@
     <div style="height: 500px;">
       <div style="height: 350px;background-image: url(../static/img/house.jpg);padding: 50px">
         <div style="font-size: 35px;font-weight: 500;color: white;font-family: SimHei">你好 朋友</div>
-        <div style="font-size: 22px;font-weight: 500;color: white;font-family: SimHei">让您入住更轻松</div>
+        <div style="font-size: 22px;font-weight: 500;color: white;font-family: SimHei">让您出行更轻松</div>
         <div style="height: 250px;margin-top: 100px">
           <a-card :bordered="false" hoverable style="height: 100%;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);color:#fff">
             <a-row style="padding: 50px;margin: 0 auto">
