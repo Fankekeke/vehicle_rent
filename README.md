@@ -18,7 +18,7 @@ WebStorm OR VScode 编译器 [https://www.jianshu.com/p/d63b5bae9dff]
 
 #### 采用技术及功能
 
-后端：SpringBoot、MybatisPlus、MySQL、Redis、
+后端：SpringBoot、MybatisPlus、MySQL、Redis、支付宝沙盒支付
 前端：Vue、Apex、Antd、Axios
 
 平台前端：vue(框架) + vuex(全局缓存) + rue-router(路由) + axios(请求插件) + apex(图表)  + antd-ui(ui组件)
