@@ -33,7 +33,7 @@ public interface IVehicleInfoService extends IService<VehicleInfo> {
      * @param endDate   结束时间
      * @return 结果
      */
-    List<VehicleInfo> selectVehicleByDate(String startDate, String endDate);
+    List<VehicleInfo> selectVehicleByDate(String startDate, String endDate, Integer peopleNumber);
 
     /**
      * 新增车辆信息

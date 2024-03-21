@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
@@ -75,12 +76,36 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
      * @return 结果
      */
     @Override
-    public List<VehicleInfo> selectVehicleByDate(String startDate, String endDate) {
+    public List<VehicleInfo> selectVehicleByDate(String startDate, String endDate, Integer peopleNumber) {
+        List<VehicleTypeInfo> typeInfoList = vehicleTypeInfoService.list();
+        Map<Integer, String> vehicleTypeMap = typeInfoList.stream().collect(Collectors.toMap(VehicleTypeInfo::getId, VehicleTypeInfo::getName));
+        // 根据人数获取推荐车型
+        List<Integer> typeIds = new ArrayList<>();
+        if (peopleNumber != null) {
+            for (VehicleTypeInfo vehicleTypeInfo : typeInfoList) {
+                if (vehicleTypeInfo.getSeats() >= peopleNumber) {
+                    typeIds.add(vehicleTypeInfo.getId());
+                }
+            }
+        }
+
         // 获取所有车辆信息
         List<VehicleInfo> vehicleInfoList = this.list(Wrappers.<VehicleInfo>lambdaQuery().ne(VehicleInfo::getStatus, "3"));
         if (CollectionUtil.isEmpty(vehicleInfoList)) {
             return vehicleInfoList;
         }
+
+        for (VehicleInfo vehicle : vehicleInfoList) {
+            // 车辆类型
+            if (vehicle.getUseType() != null && CollectionUtil.isNotEmpty(vehicleTypeMap)) {
+                vehicle.setTypeName(vehicleTypeMap.get(vehicle.getUseType()));
+            }
+        }
+
+        if (CollectionUtil.isNotEmpty(typeIds)) {
+            vehicleInfoList = vehicleInfoList.stream().filter(e -> typeIds.contains(e.getUseType())).collect(Collectors.toList());
+        }
+
         List<String> vehicleNos = vehicleInfoList.stream().map(VehicleInfo::getVehicleNo).filter(StrUtil::isNotEmpty).collect(Collectors.toList());
 
         // 车辆订单记录
@@ -118,7 +143,7 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
                 }
             }
         }
-        return vehicleInfoList;
+        return vehicleInfoList.stream().filter(e -> "0".equals(e.getStatus())).collect(Collectors.toList());
     }
 
     /**
@@ -619,6 +644,7 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @Scheduled(fixedRate = 30000)
     public boolean setVehicleStatus() {
         // 需要更新的车辆状态信息
         Map<String, String> vehicleUpdateList = new HashMap<>();
@@ -697,6 +723,8 @@ public class VehicleInfoServiceImpl extends ServiceImpl<VehicleInfoMapper, Vehic
         if (CollectionUtil.isNotEmpty(orderUpdateList)) {
             orderInfoService.updateBatchById(orderUpdateList);
         }
+        // 状态更新
+        System.out.println("===========>状态更新");
         return true;
     }
 }

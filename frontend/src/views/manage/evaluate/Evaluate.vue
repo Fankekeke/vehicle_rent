@@ -248,7 +248,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/evaluate-info/' + ids).then(() => {
+          that.$delete('/cos/order-evaluate/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()

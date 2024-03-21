@@ -47,8 +47,8 @@ public class VehicleInfoController {
      * @return 结果
      */
     @GetMapping("/order/check")
-    public R selectVehicleByDate(@RequestParam(value = "startDate", required = false) String startDate, @RequestParam(value = "endDate", required = false) String endDate) {
-        return R.ok(vehicleInfoService.selectVehicleByDate(startDate, endDate));
+    public R selectVehicleByDate(@RequestParam(value = "startDate", required = false) String startDate, @RequestParam(value = "endDate", required = false) String endDate, @RequestParam(value = "peopleNumber", required = false) Integer peopleNumber) {
+        return R.ok(vehicleInfoService.selectVehicleByDate(startDate, endDate, peopleNumber));
     }
 
     /**

@@ -7,10 +7,13 @@
         <div style="height: 250px;margin-top: 100px">
           <a-card :bordered="false" hoverable style="height: 100%;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);color:#fff">
             <a-row style="padding: 50px;margin: 0 auto">
-              <a-col :span="16">
+              <a-col :span="20">
                 <a-row>
-                  <a-col :span="18">
+                  <a-col :span="13">
                     <a-range-picker @change="onChange" style="width: 100%" size="large"/>
+                  </a-col>
+                  <a-col :span="4" :offset="1">
+                    <a-input v-model="peopleNumber" placeholder="请输入人数" size="large"/>
                   </a-col>
                   <a-col :span="4" :offset="2">
                     <a-button type="primary" size="large" @click="fetch">
@@ -48,7 +51,7 @@
           <a-card :bordered="false">
             <div slot="title">
               <div style="font-size: 14px;font-family: SimHei">
-                {{ item.vehicleNumber }} | <span style="color: red">￥{{ item.dayPrice }}/天</span>
+                {{ item.vehicleNumber }}| {{ item.typeName }} | <span style="color: red">￥{{ item.dayPrice }}/天</span>
               </div>
             </div>
             <template slot="actions" class="ant-card-actions">
@@ -85,6 +88,7 @@ export default {
         visiable: false,
         data: null
       },
+      peopleNumber: null,
       rentView: {
         visiable: false,
         data: null
@@ -155,7 +159,7 @@ export default {
     },
     fetch () {
       if (this.startDate && this.endDate) {
-        let params = { startDate: this.startDate, endDate: this.endDate }
+        let params = { startDate: this.startDate, endDate: this.endDate, peopleNumber: this.peopleNumber }
         this.getWorkStatusList(params)
       } else {
         this.getWorkStatusList()
